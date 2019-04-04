@@ -13,6 +13,7 @@ var helmet = require("helmet");
 var debug = require("debug")("rest-cloud:server");
 var http = require("http");
 var cors = require("cors");
+var mongoose = require("mongoose");
 var AuthMW = require("./middleware/auth");
 var BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder");
 var zmq = require("zeromq");
@@ -71,6 +72,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+// By default, the AUTH env var is set to false.
+process.env.AUTH ? process.env.AUTH : "false";
+if (process.env.AUTH === "true") {
+    //Configure mongoose's promise to global promise
+    mongoose.promise = global.Promise;
+    //Configure Mongoose
+    mongoose.connect('mongodb://localhost/pro-auth');
+    mongoose.set('debug', true);
+}
 // Make io accessible to our router
 app.use(function (req, res, next) {
     req.io = io;

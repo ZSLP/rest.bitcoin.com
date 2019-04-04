@@ -16,6 +16,7 @@ const helmet = require("helmet")
 const debug = require("debug")("rest-cloud:server")
 const http = require("http")
 const cors = require("cors")
+const mongoose = require("mongoose")
 const AuthMW = require("./middleware/auth")
 
 const BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder")
@@ -93,15 +94,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "public")))
 
-//
-// let username = process.env.USERNAME;
-// let password = process.env.PASSWORD;
-//
-// app.use(basicAuth(
-//   {
-//     users: { username: password }
-//   }
-// ));
+// By default, the AUTH env var is set to false.
+process.env.AUTH ? process.env.AUTH : "false"
+if(process.env.AUTH === "true") {
+  //Configure mongoose's promise to global promise
+  mongoose.promise = global.Promise;
+
+  //Configure Mongoose
+  mongoose.connect('mongodb://localhost/pro-auth');
+  mongoose.set('debug', true);
+}
 
 interface ICustomRequest extends express.Request {
   io: any
