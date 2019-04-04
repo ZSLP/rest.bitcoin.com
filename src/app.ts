@@ -103,6 +103,9 @@ if(process.env.AUTH === "true") {
   //Configure Mongoose
   mongoose.connect('mongodb://localhost/pro-auth');
   mongoose.set('debug', true);
+
+  // Add the users model.
+  require('./models/users')
 }
 
 interface ICustomRequest extends express.Request {
@@ -138,6 +141,7 @@ app.use(`/${v1prefix}/` + `payloadCreation`, payloadCreationV1)
 app.use(`/${v1prefix}/` + `slp`, slpV1)
 
 // Instantiate the authorization middleware, used to implement pro-tier rate limiting.
+// Dev Note: These commands need to come AFTER the mongoose stuff.
 const auth = new AuthMW()
 app.use(`/${v2prefix}/`, auth.mw())
 

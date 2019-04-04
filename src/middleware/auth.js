@@ -14,6 +14,8 @@
 const passport = require("passport")
 const BasicStrategy = require("passport-http").BasicStrategy
 const AnonymousStrategy = require("passport-anonymous")
+const LocalStrategy = require("passport-local")
+const mongoose = require("mongoose")
 const wlogger = require("../util/winston-logging")
 
 // Used for debugging and iterrogating JS objects.
@@ -87,6 +89,28 @@ class AuthMW {
 
         return done(null, true)
       })
+    )
+
+    passport.use(
+      new LocalStrategy(
+        {
+          usernameField: "user[email]",
+          passwordField: "user[password]"
+        },
+        (email, password, done) => {
+          Users.findOne({ email })
+            .then(user => {
+              if (!user || !user.validatePassword(password)) {
+                return done(null, false, {
+                  errors: { "email or password": "is invalid" }
+                })
+              }
+
+              return done(null, user)
+            })
+            .catch(done)
+        }
+      )
     )
   }
 
