@@ -56,6 +56,7 @@ var rawtransactionsV2 = require("./routes/v2/rawtransactions");
 var transactionV2 = require("./routes/v2/transaction");
 var utilV2 = require("./routes/v2/util");
 var slpV2 = require("./routes/v2/slp");
+var user = require("./routes/v2/user");
 require("dotenv").config();
 var app = express();
 app.locals.env = process.env;
@@ -80,6 +81,8 @@ if (process.env.AUTH === "true") {
     //Configure Mongoose
     mongoose.connect('mongodb://localhost/pro-auth');
     mongoose.set('debug', true);
+    // Add the users model.
+    require('./models/users');
 }
 // Make io accessible to our router
 app.use(function (req, res, next) {
@@ -104,6 +107,7 @@ app.use("/" + v1prefix + "/" + "dataRetrieval", dataRetrievalV1);
 app.use("/" + v1prefix + "/" + "payloadCreation", payloadCreationV1);
 app.use("/" + v1prefix + "/" + "slp", slpV1);
 // Instantiate the authorization middleware, used to implement pro-tier rate limiting.
+// Dev Note: These commands need to come AFTER the mongoose stuff.
 var auth = new AuthMW();
 app.use("/" + v2prefix + "/", auth.mw());
 // Rate limit on all v2 routes
@@ -121,6 +125,7 @@ app.use("/" + v2prefix + "/" + "rawtransactions", rawtransactionsV2.router);
 app.use("/" + v2prefix + "/" + "transaction", transactionV2.router);
 app.use("/" + v2prefix + "/" + "util", utilV2.router);
 app.use("/" + v2prefix + "/" + "slp", slpV2.router);
+app.use("/" + v2prefix + "/" + 'user', user.router);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = {

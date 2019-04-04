@@ -12,6 +12,8 @@
 var passport = require("passport");
 var BasicStrategy = require("passport-http").BasicStrategy;
 var AnonymousStrategy = require("passport-anonymous");
+var LocalStrategy = require("passport-local");
+var mongoose = require("mongoose");
 var wlogger = require("../util/winston-logging");
 // Used for debugging and iterrogating JS objects.
 var util = require("util");
@@ -65,6 +67,21 @@ var AuthMW = /** @class */ (function () {
             }
             //console.log(`req.locals: ${util.inspect(req.locals)}`)
             return done(null, true);
+        }));
+        passport.use(new LocalStrategy({
+            usernameField: "user[email]",
+            passwordField: "user[password]"
+        }, function (email, password, done) {
+            Users.findOne({ email: email })
+                .then(function (user) {
+                if (!user || !user.validatePassword(password)) {
+                    return done(null, false, {
+                        errors: { "email or password": "is invalid" }
+                    });
+                }
+                return done(null, user);
+            })
+                .catch(done);
         }));
     }
     // Middleware called by the route.

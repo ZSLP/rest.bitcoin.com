@@ -64,6 +64,7 @@ const rawtransactionsV2 = require("./routes/v2/rawtransactions")
 const transactionV2 = require("./routes/v2/transaction")
 const utilV2 = require("./routes/v2/util")
 const slpV2 = require("./routes/v2/slp")
+const user = require("./routes/v2/user")
 
 interface IError {
   message: string
@@ -160,6 +161,7 @@ app.use(`/${v2prefix}/` + `rawtransactions`, rawtransactionsV2.router)
 app.use(`/${v2prefix}/` + `transaction`, transactionV2.router)
 app.use(`/${v2prefix}/` + `util`, utilV2.router)
 app.use(`/${v2prefix}/` + `slp`, slpV2.router)
+app.use(`/${v2prefix}/` + 'user', user.router)
 
 // catch 404 and forward to error handler
 app.use(
