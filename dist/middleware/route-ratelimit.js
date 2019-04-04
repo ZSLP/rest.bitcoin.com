@@ -8,6 +8,9 @@
   freemium rate limits apply.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+// Used for debugging and iterrogating JS objects.
+var util = require("util");
+util.inspect.defaultOptions = { depth: 1 };
 var RateLimit = require("express-rate-limit");
 // Set max requests per minute
 var maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
@@ -35,6 +38,7 @@ var routeRateLimit = function (req, res, next) {
             .join("/");
     // This boolean value is passed from the auth.js middleware.
     var proRateLimits = req.locals.proLimit;
+    console.log("route-ratelimit.ts req.user: " + util.inspect(req.user));
     // Pro level rate limits
     if (proRateLimits) {
         // TODO: replace the console.logs with calls to our logging system.

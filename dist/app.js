@@ -15,6 +15,7 @@ var http = require("http");
 var cors = require("cors");
 var mongoose = require("mongoose");
 var AuthMW = require("./middleware/auth");
+var jwtAuth = require("./middleware/jwt-auth");
 var BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder");
 var zmq = require("zeromq");
 var sock = zmq.socket("sub");
@@ -74,7 +75,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 // By default, the AUTH env var is set to false.
-process.env.AUTH ? process.env.AUTH : "false";
+process.env.AUTH ? process.env.AUTH : "true";
 if (process.env.AUTH === "true") {
     //Configure mongoose's promise to global promise
     mongoose.promise = global.Promise;
@@ -106,7 +107,10 @@ app.use("/" + v1prefix + "/" + "util", utilV1);
 app.use("/" + v1prefix + "/" + "dataRetrieval", dataRetrievalV1);
 app.use("/" + v1prefix + "/" + "payloadCreation", payloadCreationV1);
 app.use("/" + v1prefix + "/" + "slp", slpV1);
-// Instantiate the authorization middleware, used to implement pro-tier rate limiting.
+// Inspect the header for a JWT token.
+app.use("/" + v2prefix + "/", jwtAuth.optional);
+// Instantiate the authorization middleware, used to implement pro-tier rate
+// limiting.
 // Dev Note: These commands need to come AFTER the mongoose stuff.
 var auth = new AuthMW();
 app.use("/" + v2prefix + "/", auth.mw());

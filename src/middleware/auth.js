@@ -20,7 +20,7 @@ const wlogger = require("../util/winston-logging")
 
 // Used for debugging and iterrogating JS objects.
 const util = require("util")
-util.inspect.defaultOptions = { depth: 1 }
+util.inspect.defaultOptions = { depth: 2 }
 
 let _this
 
@@ -37,7 +37,7 @@ class AuthMW {
     _this = this
 
     // Initialize passport for 'anonymous' authentication.
-    /*
+
     passport.use(
       new AnonymousStrategy({ passReqToCallback: true }, function(
         req,
@@ -48,8 +48,8 @@ class AuthMW {
         console.log(`anonymous auth handler triggered.`)
       })
     )
-    */
-    passport.use(new AnonymousStrategy())
+
+    //passport.use(new AnonymousStrategy())
 
     // Initialize passport for 'basic' authentication.
     passport.use(
@@ -76,6 +76,7 @@ class AuthMW {
             const thisPass = PRO_PASS[i]
 
             if (password === thisPass) {
+              console.log(`${req.url} called by ${password.slice(0, 6)}`)
               wlogger.verbose(`${req.url} called by ${password.slice(0, 6)}`)
 
               // Success
@@ -95,9 +96,13 @@ class AuthMW {
       new LocalStrategy(
         {
           usernameField: "user[email]",
-          passwordField: "user[password]"
+          passwordField: "user[password]",
+          passReqToCallback: true,
+          session: false
         },
-        (email, password, done) => {
+        (req, email, password, done) => {
+          console.log(`Checking against local strategy.`)
+
           Users.findOne({ email })
             .then(user => {
               if (!user || !user.validatePassword(password)) {
@@ -115,7 +120,10 @@ class AuthMW {
   }
 
   // Middleware called by the route.
+  //mw(req, res, next) {
   mw() {
+    //console.log(`auth.js req.user: ${util.inspect(req.user)}`)
+
     return passport.authenticate(["basic", "anonymous"], {
       session: false
     })

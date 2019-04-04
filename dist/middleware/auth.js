@@ -17,7 +17,7 @@ var mongoose = require("mongoose");
 var wlogger = require("../util/winston-logging");
 // Used for debugging and iterrogating JS objects.
 var util = require("util");
-util.inspect.defaultOptions = { depth: 1 };
+util.inspect.defaultOptions = { depth: 2 };
 var _this;
 // Set default rate limit value for testing
 var PRO_PASSes = process.env.PRO_PASS ? process.env.PRO_PASS : "BITBOX";
@@ -29,19 +29,10 @@ var AuthMW = /** @class */ (function () {
     function AuthMW() {
         _this = this;
         // Initialize passport for 'anonymous' authentication.
-        /*
-        passport.use(
-          new AnonymousStrategy({ passReqToCallback: true }, function(
-            req,
-            username,
-            password,
-            done
-          ) {
-            console.log(`anonymous auth handler triggered.`)
-          })
-        )
-        */
-        passport.use(new AnonymousStrategy());
+        passport.use(new AnonymousStrategy({ passReqToCallback: true }, function (req, username, password, done) {
+            console.log("anonymous auth handler triggered.");
+        }));
+        //passport.use(new AnonymousStrategy())
         // Initialize passport for 'basic' authentication.
         passport.use(new BasicStrategy({ passReqToCallback: true }, function (req, username, password, done) {
             //console.log(`req: ${util.inspect(req)}`)
@@ -58,6 +49,7 @@ var AuthMW = /** @class */ (function () {
                 for (var i = 0; i < PRO_PASS.length; i++) {
                     var thisPass = PRO_PASS[i];
                     if (password === thisPass) {
+                        console.log(req.url + " called by " + password.slice(0, 6));
                         wlogger.verbose(req.url + " called by " + password.slice(0, 6));
                         // Success
                         req.locals.proLimit = true;
@@ -70,8 +62,11 @@ var AuthMW = /** @class */ (function () {
         }));
         passport.use(new LocalStrategy({
             usernameField: "user[email]",
-            passwordField: "user[password]"
-        }, function (email, password, done) {
+            passwordField: "user[password]",
+            passReqToCallback: true,
+            session: false
+        }, function (req, email, password, done) {
+            console.log("Checking against local strategy.");
             Users.findOne({ email: email })
                 .then(function (user) {
                 if (!user || !user.validatePassword(password)) {
@@ -85,7 +80,9 @@ var AuthMW = /** @class */ (function () {
         }));
     }
     // Middleware called by the route.
+    //mw(req, res, next) {
     AuthMW.prototype.mw = function () {
+        //console.log(`auth.js req.user: ${util.inspect(req.user)}`)
         return passport.authenticate(["basic", "anonymous"], {
             session: false
         });

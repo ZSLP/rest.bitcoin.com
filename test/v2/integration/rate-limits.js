@@ -11,8 +11,8 @@ const axios = require("axios")
 const util = require("util")
 util.inspect.defaultOptions = { depth: 1 }
 
-const SERVER = `https://rest.btctest.net/v2/`
-//const SERVER = `http://localhost:3000/v2/`
+//const SERVER = `https://rest.btctest.net/v2/`
+const SERVER = `http://localhost:3000/v2/`
 
 describe("#rate limits", () => {
   it("should get control/getInfo() with no auth", async () => {
@@ -38,7 +38,7 @@ describe("#rate limits", () => {
       }
 
       const promises = []
-      for (let i = 0; i < 250; i++) {
+      for (let i = 0; i < 1; i++) {
         const promise = axios(options)
         promises.push(promise)
       }
@@ -73,7 +73,7 @@ describe("#rate limits", () => {
       }
 
       const promises = []
-      for (let i = 0; i < 250; i++) {
+      for (let i = 0; i < 1; i++) {
         const promise = axios(options)
         promises.push(promise)
       }
