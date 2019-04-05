@@ -14,6 +14,8 @@ util.inspect.defaultOptions = { depth: 1 }
 import * as express from "express"
 const RateLimit = require("express-rate-limit")
 
+const Users = require("../models/users")
+
 // Set max requests per minute
 const maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
   ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS)
@@ -31,11 +33,12 @@ declare global {
     interface Request {
       locals: any
       user: any
+      payload: any
     }
   }
 }
 
-const routeRateLimit = function(
+const routeRateLimit = async function(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
@@ -58,9 +61,14 @@ const routeRateLimit = function(
       .join("/")
 
   // This boolean value is passed from the auth.js middleware.
-  const proRateLimits = req.locals.proLimit
+  let proRateLimits = req.locals.proLimit
 
   console.log(`route-ratelimit.ts req.user: ${util.inspect(req.user)}`)
+  console.log(`req.payload: ${util.inspect(req.payload)}`)
+
+  // Unlock the pro-tier rate limits if the user passed in a valid JWT token.
+  if(!proRateLimits)
+    proRateLimits = await validateJWT(req)
 
   // Pro level rate limits
   if (proRateLimits) {
@@ -115,6 +123,28 @@ const routeRateLimit = function(
 
   // Call rate limit for this route
   uniqueRateLimits[route](req, res, next)
+}
+
+async function validateJWT(req: express.Request) {
+  try {
+    let id
+
+    // Get the ID from the JWT token.
+    if(req.payload) {
+      id = req.payload.id
+    } else {
+      return false
+    }
+
+    const user = await Users.findById(id)
+    console.log(`user: ${util.inspect(user)}`)
+
+    // By default, return false
+    return false
+  } catch(err) {
+    // By default, return false
+    return false
+  }
 }
 
 export { routeRateLimit }

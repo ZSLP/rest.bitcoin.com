@@ -9,7 +9,6 @@ mongoose.Promise = global.Promise;
 mongoose.set("useCreateIndex", true); // Stop deprecation warning.
 //Configure Mongoose
 mongoose.connect("mongodb://localhost:27017/pro-auth", {
-    //useNewUrlParser: true
     useMongoClient: true
 });
 var Schema = mongoose.Schema;
