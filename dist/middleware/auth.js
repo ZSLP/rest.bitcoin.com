@@ -80,12 +80,13 @@ var AuthMW = /** @class */ (function () {
         }));
     }
     // Middleware called by the route.
-    //mw(req, res, next) {
     AuthMW.prototype.mw = function () {
-        //console.log(`auth.js req.user: ${util.inspect(req.user)}`)
-        return passport.authenticate(["basic", "anonymous"], {
+        console.log("authenticating with basic or anonymous. (1)");
+        var obj = passport.authenticate(["basic", "anonymous"], {
             session: false
         });
+        console.log("obj: " + util.inspect(obj));
+        return obj;
     };
     return AuthMW;
 }());

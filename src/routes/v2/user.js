@@ -4,16 +4,25 @@
 
 "use strict"
 
+// Used for debugging and iterrogating JS objects.
+const util = require("util")
+util.inspect.defaultOptions = { depth: 1 }
+
 const express = require("express")
 const router = express.Router()
 
 const wlogger = require("../../util/winston-logging")
 
-const mongoose = require("mongoose")
+//const mongoose = require("mongoose")
+
+//Configure mongoose's promise to global promise
+//mongoose.Promise = global.Promise
+
 //const passport = require("passport")
 //const auth = require("../auth")
-require("../../models/users")
-const Users = mongoose.model("Users")
+//require("../../models/users")
+//const Users = mongoose.model("Users")
+const Users = require("../../models/users")
 
 router.get("/", root)
 router.post("/", newUser)
@@ -25,32 +34,45 @@ function root(req, res, next) {
 }
 
 //POST new user route (optional, everyone has access)
-function newUser(req, res, next) {
-  const {
-    body: { user }
-  } = req
+async function newUser(req, res, next) {
+  try {
+    const {
+      body: { user }
+    } = req
 
-  if (!user.email) {
-    return res.status(422).json({
-      errors: {
-        email: "is required"
-      }
-    })
+    console.log(`user: ${util.inspect(user)}`)
+
+    if (!user.email) {
+      return res.status(422).json({
+        errors: {
+          email: "is required"
+        }
+      })
+    }
+
+    if (!user.password) {
+      return res.status(422).json({
+        errors: {
+          password: "is required"
+        }
+      })
+    }
+
+    const finalUser = new Users(user)
+
+    finalUser.setPassword(user.password)
+    console.log(`password set`)
+
+    await finalUser.save()
+
+    console.log(`user saved!`)
+
+    return res.json({ user: finalUser.toAuthJSON() })
+
+    //return finalUser.save().then(() => res.json({ user: finalUser.toAuthJSON() }))
+  } catch (err) {
+    console.log(`Error in user.js/newUser(): `, err)
   }
-
-  if (!user.password) {
-    return res.status(422).json({
-      errors: {
-        password: "is required"
-      }
-    })
-  }
-
-  const finalUser = new Users(user)
-
-  finalUser.setPassword(user.password)
-
-  return finalUser.save().then(() => res.json({ user: finalUser.toAuthJSON() }))
 }
 
 //POST login route (optional, everyone has access)

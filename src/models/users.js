@@ -8,6 +8,13 @@ const mongoose = require("mongoose")
 const crypto = require("crypto")
 const jwt = require("jsonwebtoken")
 
+mongoose.Promise = global.Promise
+mongoose.set("useCreateIndex", true) // Stop deprecation warning.
+//Configure Mongoose
+mongoose.connect("mongodb://localhost:27017/pro-auth", {
+  useMongoClient: true
+})
+
 const { Schema } = mongoose
 
 const UsersSchema = new Schema({
@@ -53,4 +60,4 @@ UsersSchema.methods.toAuthJSON = function() {
   }
 }
 
-mongoose.model("Users", UsersSchema)
+module.exports = mongoose.model("Users", UsersSchema)

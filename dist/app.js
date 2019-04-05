@@ -78,12 +78,13 @@ app.use(express.static(path.join(__dirname, "public")));
 process.env.AUTH ? process.env.AUTH : "true";
 if (process.env.AUTH === "true") {
     //Configure mongoose's promise to global promise
-    mongoose.promise = global.Promise;
+    mongoose.Promise = global.Promise;
+    mongoose.set('useCreateIndex', true); // Stop deprecation warning.
     //Configure Mongoose
-    mongoose.connect('mongodb://localhost/pro-auth');
-    mongoose.set('debug', true);
+    mongoose.connect('mongodb://localhost:27017/pro-auth', { useNewUrlParser: true });
+    //mongoose.set('debug', true);
     // Add the users model.
-    require('./models/users');
+    //require('./models/users')
 }
 // Make io accessible to our router
 app.use(function (req, res, next) {

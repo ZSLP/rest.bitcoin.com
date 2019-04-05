@@ -28,8 +28,34 @@ describe("#rate limits", () => {
     assert.equal(result.status, 200)
     assert.hasAnyKeys(result.data, ["version"])
   })
-
+  /*
   it("should trigger rate-limit handler if rate limits exceeds 60 request per minute", async () => {
+    try {
+      // Actual rate limit is 60 per minute X 4 nodes = 240 rpm.
+      const options = {
+        method: "GET",
+        url: `${SERVER}control/getInfo`
+      }
+
+      const promises = []
+      for (let i = 0; i < 1; i++) {
+        const promise = axios(options)
+        promises.push(promise)
+      }
+
+      await Promise.all(promises)
+
+      assert.equal(true, false, "Unexpected result!")
+    } catch (err) {
+      //console.log(`err.response: ${util.inspect(err.response)}`)
+
+      assert.equal(err.response.status, 429)
+      assert.include(err.response.data.error, "Too many requests")
+    }
+  })
+*/
+
+  it("should recognize an auth token", async () => {
     try {
       // Actual rate limit is 60 per minute X 4 nodes = 240 rpm.
       const options = {

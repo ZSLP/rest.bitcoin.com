@@ -120,13 +120,15 @@ class AuthMW {
   }
 
   // Middleware called by the route.
-  //mw(req, res, next) {
   mw() {
-    //console.log(`auth.js req.user: ${util.inspect(req.user)}`)
-
-    return passport.authenticate(["basic", "anonymous"], {
+    console.log(`authenticating with basic or anonymous. (1)`)
+    const obj = passport.authenticate(["basic", "anonymous"], {
       session: false
     })
+
+    console.log(`obj: ${util.inspect(obj)}`)
+
+    return obj
   }
 }
 

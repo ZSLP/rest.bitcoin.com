@@ -5,6 +5,13 @@
 var mongoose = require("mongoose");
 var crypto = require("crypto");
 var jwt = require("jsonwebtoken");
+mongoose.Promise = global.Promise;
+mongoose.set("useCreateIndex", true); // Stop deprecation warning.
+//Configure Mongoose
+mongoose.connect("mongodb://localhost:27017/pro-auth", {
+    //useNewUrlParser: true
+    useMongoClient: true
+});
 var Schema = mongoose.Schema;
 var UsersSchema = new Schema({
     email: String,
@@ -40,4 +47,4 @@ UsersSchema.methods.toAuthJSON = function () {
         token: this.generateJWT()
     };
 };
-mongoose.model("Users", UsersSchema);
+module.exports = mongoose.model("Users", UsersSchema);
