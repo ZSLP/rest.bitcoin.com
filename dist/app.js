@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// Used for debugging and iterrogating JS objects.
+var util = require("util");
+util.inspect.defaultOptions = { depth: 1 };
 var express = require("express");
 // Middleware
 var route_ratelimit_1 = require("./middleware/route-ratelimit");
@@ -140,15 +143,16 @@ app.use(function (req, res, next) {
     next(err);
 });
 // error handler
-app.use(function (err, req, res) {
+app.use(function (err, req, res, next) {
+    console.log("err: " + util.inspect(err));
     var status = err.status || 500;
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get("env") === "development" ? err : {};
     // render the error page
-    res.status(err.status || 500);
+    res.status(status || 500);
     res.json({
-        status: 500,
+        status: status,
         message: err.message
     });
 });
