@@ -16,6 +16,8 @@ const RateLimit = require("express-rate-limit")
 
 const Users = require("../models/users")
 
+const UserDB = require("../util/cassandra/cassandra-db")
+
 // Set max requests per minute
 const maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
   ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS)
@@ -67,8 +69,18 @@ const routeRateLimit = async function(
   console.log(`req.payload: ${util.inspect(req.payload)}`)
 
   // Unlock the pro-tier rate limits if the user passed in a valid JWT token.
-  if(!proRateLimits)
+  if(!proRateLimits) {
     proRateLimits = await validateJWT(req)
+
+    console.log(` `)
+    console.log(`Retrieving users list from Cassandra DB:`)
+
+    const userDB = new UserDB()
+    const users = await userDB.readAllUsers()
+    console.log(`users: ${JSON.stringify(users,null,2)}`)
+
+    console.log(` `)
+  }
 
   // Pro level rate limits
   if (proRateLimits) {
@@ -131,7 +143,7 @@ async function validateJWT(req: express.Request) {
 
     // Get the ID from the JWT token.
     if(req.payload) {
-      id = req.payload.id
+      id = req.payload.idconsole.log(` `)
     } else {
       return false
     }

@@ -24,13 +24,37 @@ const wlogger = require("../../util/winston-logging")
 //const Users = mongoose.model("Users")
 const Users = require("../../models/users")
 
+const UserDB = require("../../util/cassandra/cassandra-db")
+const userDB = new UserDB()
+
 router.get("/", root)
 router.post("/", newUser)
+router.post("/createUser", newUser2)
 router.post("/login", login)
 router.get("/current", current)
 
 function root(req, res, next) {
   return res.json({ status: "user" })
+}
+
+async function newUser2(req, res, next) {
+  try {
+    const user = req.body.user
+
+    if (!user || user === "") {
+      res.status(422)
+      return res.json({ error: "invalid user data" })
+    }
+
+    // TODO: replace password with a hash.
+    user.passwordHash = user.password
+
+    await userDB.createUser(user)
+
+    return res.json({ success: true })
+  } catch (err) {
+    console.error(`Error in user.js/newUser2(): `, err)
+  }
 }
 
 //POST new user route (optional, everyone has access)

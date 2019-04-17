@@ -32,9 +32,11 @@ class UserDB {
     try {
       wlogger.silly("Enteried cassandra-db/createUser()")
 
+      console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
+
       await this.client.connect()
 
-      await this.client.execute(`
+      const data = await this.client.execute(`
       INSERT INTO users(
         id,
         email,
@@ -47,19 +49,22 @@ class UserDB {
       )
       VALUES(
         uuid(),
-        ${user.email},
-        ${user.passwordHash},
-        ${user.bchAddr},
-        ${user.firstName},
-        ${user.lastName},
-        ${user.displayName},
-        ${user.misc}
+        '${user.email}',
+        '${user.passwordHash}',
+        '${user.bchAddr}',
+        '${user.firstName}',
+        '${user.lastName}',
+        '${user.displayName}',
+        '${user.misc}'
       )
       `)
+
+      console.log(`user data: ${JSON.stringify(data, null, 2)}`)
 
       await this.client.shutdown()
     } catch (err) {
       wlogger.error(`Error in cassandra-db/createUser()`, err)
+      throw err
     }
   }
 
@@ -80,6 +85,7 @@ class UserDB {
       return data.rows
     } catch (err) {
       wlogger.error(`Error in cassandra-db/readAllUsers()`, err)
+      throw err
     }
   }
 
@@ -99,6 +105,7 @@ class UserDB {
       await this.client.shutdown()
     } catch (err) {
       wlogger.error(`Error in cassandra-db/updateUser()`, err)
+      throw err
     }
   }
 
@@ -116,6 +123,9 @@ class UserDB {
       await this.client.shutdown()
     } catch (err) {
       wlogger.error(`Error in cassandra-db/deleteUser()`, err)
+      throw err
     }
   }
 }
+
+module.exports = UserDB

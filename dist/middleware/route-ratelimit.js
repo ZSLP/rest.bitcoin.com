@@ -48,6 +48,7 @@ var util = require("util");
 util.inspect.defaultOptions = { depth: 1 };
 var RateLimit = require("express-rate-limit");
 var Users = require("../models/users");
+var UserDB = require("../util/cassandra/cassandra-db");
 // Set max requests per minute
 var maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
     ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS)
@@ -58,7 +59,7 @@ var PRO_RPM = 10 * maxRequests;
 var uniqueRateLimits = {};
 var routeRateLimit = function (req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
-        var rateLimitTier, path, route, proRateLimits;
+        var rateLimitTier, path, route, proRateLimits, userDB, users;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -81,14 +82,20 @@ var routeRateLimit = function (req, res, next) {
                     proRateLimits = req.locals.proLimit;
                     console.log("route-ratelimit.ts req.user: " + util.inspect(req.user));
                     console.log("req.payload: " + util.inspect(req.payload));
-                    if (!!proRateLimits) return [3 /*break*/, 2];
-                    return [4 /*yield*/, validateJWT(req)
-                        // Pro level rate limits
-                    ];
+                    if (!!proRateLimits) return [3 /*break*/, 3];
+                    return [4 /*yield*/, validateJWT(req)];
                 case 1:
                     proRateLimits = _a.sent();
-                    _a.label = 2;
+                    console.log(" ");
+                    console.log("Retrieving users list from Cassandra DB:");
+                    userDB = new UserDB();
+                    return [4 /*yield*/, userDB.readAllUsers()];
                 case 2:
+                    users = _a.sent();
+                    console.log("users: " + JSON.stringify(users, null, 2));
+                    console.log(" ");
+                    _a.label = 3;
+                case 3:
                     // Pro level rate limits
                     if (proRateLimits) {
                         // TODO: replace the console.logs with calls to our logging system.
@@ -147,7 +154,7 @@ function validateJWT(req) {
                     id = void 0;
                     // Get the ID from the JWT token.
                     if (req.payload) {
-                        id = req.payload.id;
+                        id = req.payload.idconsole.log(" ");
                     }
                     else {
                         return [2 /*return*/, false];

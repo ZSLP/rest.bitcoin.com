@@ -59,24 +59,27 @@ var UserDB = /** @class */ (function () {
     // Create a new user
     UserDB.prototype.createUser = function (user) {
         return __awaiter(this, void 0, void 0, function () {
-            var err_1;
+            var data, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, , 5]);
                         wlogger.silly("Enteried cassandra-db/createUser()");
+                        console.log("user data received: " + JSON.stringify(user, null, 2));
                         return [4 /*yield*/, this.client.connect()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.client.execute("\n      INSERT INTO users(\n        id,\n        email,\n        pass_hash,\n        bch_addr,\n        first_name,\n        last_name,\n        display_name,\n        misc\n      )\n      VALUES(\n        uuid(),\n        " + user.email + ",\n        " + user.passwordHash + ",\n        " + user.bchAddr + ",\n        " + user.firstName + ",\n        " + user.lastName + ",\n        " + user.displayName + ",\n        " + user.misc + "\n      )\n      ")];
+                        return [4 /*yield*/, this.client.execute("\n      INSERT INTO users(\n        id,\n        email,\n        pass_hash,\n        bch_addr,\n        first_name,\n        last_name,\n        display_name,\n        misc\n      )\n      VALUES(\n        uuid(),\n        '" + user.email + "',\n        '" + user.passwordHash + "',\n        '" + user.bchAddr + "',\n        '" + user.firstName + "',\n        '" + user.lastName + "',\n        '" + user.displayName + "',\n        '" + user.misc + "'\n      )\n      ")];
                     case 2:
-                        _a.sent();
+                        data = _a.sent();
+                        console.log("user data: " + JSON.stringify(data, null, 2));
                         return [4 /*yield*/, this.client.shutdown()];
                     case 3:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 4:
                         err_1 = _a.sent();
+                        console.error(err_1);
                         wlogger.error("Error in cassandra-db/createUser()", err_1);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
@@ -174,3 +177,4 @@ var UserDB = /** @class */ (function () {
     };
     return UserDB;
 }());
+module.exports = UserDB;
