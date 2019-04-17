@@ -188,13 +188,14 @@ app.use(
 // error handler
 app.use((err: IError, req: express.Request, res: express.Response, next: express.NextFunction) => {
   const status = err.status || 500
-  
+
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get("env") === "development" ? err : {}
 
   // render the error page
-  res.status(status || 500)
+  res.status(status)
+
   res.json({
     status: status,
     message: err.message
