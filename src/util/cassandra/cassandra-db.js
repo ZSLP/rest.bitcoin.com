@@ -45,6 +45,7 @@ class UserDB {
         first_name,
         last_name,
         display_name,
+        salt,
         misc
       )
       VALUES(
@@ -55,6 +56,7 @@ class UserDB {
         '${user.firstName}',
         '${user.lastName}',
         '${user.displayName}',
+        '${user.salt}',
         '${user.misc}'
       )
       `)

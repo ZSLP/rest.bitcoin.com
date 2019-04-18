@@ -65,9 +65,9 @@ async function newUser2(req, res, next) {
     console.log(`Original user object: ${JSON.stringify(user, null, 2)}`)
 
     // TODO: replace password with a hash.
-    const newUser = jwt.setPassword(user)
+    jwt.setPassword(user)
 
-    console.log(`New user object: ${JSON.stringify(newUser, null, 2)}`)
+    //console.log(`New user object: ${JSON.stringify(newUser, null, 2)}`)
 
     await userDB.createUser(user)
 
