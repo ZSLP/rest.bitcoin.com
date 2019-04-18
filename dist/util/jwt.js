@@ -59,6 +59,8 @@ var JWT = /** @class */ (function () {
             throw err;
         }
     };
+    // Returns a JSON object with a JWT token. This is passed to the user after
+    // they log in.
     JWT.prototype.toAuthJSON = function (user) {
         try {
             return {

@@ -86,7 +86,6 @@ require("dotenv").config()
 const app: express.Application = express()
 
 app.locals.env = process.env
-//app.locals.userDB = userDB
 
 app.use(swStats.getMiddleware({ swaggerSpec: apiSpec }))
 

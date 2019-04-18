@@ -67,7 +67,6 @@ var user = require("./routes/v2/user");
 require("dotenv").config();
 var app = express();
 app.locals.env = process.env;
-//app.locals.userDB = userDB
 app.use(swStats.getMiddleware({ swaggerSpec: apiSpec }));
 app.use(helmet());
 app.use(cors());
