@@ -26,7 +26,8 @@ const cors = require("cors")
 const mongoose = require("mongoose")
 const AuthMW = require("./middleware/auth")
 const jwtAuth = require("./middleware/jwt-auth")
-//const Cassandra = require("./src/util/cassandra/cassandra-db")
+//const UserDB = require("./util/cassandra/cassandra-db")
+//const userDB = new UserDB()
 
 const BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder")
 
@@ -85,6 +86,7 @@ require("dotenv").config()
 const app: express.Application = express()
 
 app.locals.env = process.env
+//app.locals.userDB = userDB
 
 app.use(swStats.getMiddleware({ swaggerSpec: apiSpec }))
 

@@ -20,7 +20,8 @@ var cors = require("cors");
 var mongoose = require("mongoose");
 var AuthMW = require("./middleware/auth");
 var jwtAuth = require("./middleware/jwt-auth");
-//const Cassandra = require("./src/util/cassandra/cassandra-db")
+//const UserDB = require("./util/cassandra/cassandra-db")
+//const userDB = new UserDB()
 var BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder");
 var zmq = require("zeromq");
 var sock = zmq.socket("sub");
@@ -66,6 +67,7 @@ var user = require("./routes/v2/user");
 require("dotenv").config();
 var app = express();
 app.locals.env = process.env;
+//app.locals.userDB = userDB
 app.use(swStats.getMiddleware({ swaggerSpec: apiSpec }));
 app.use(helmet());
 app.use(cors());

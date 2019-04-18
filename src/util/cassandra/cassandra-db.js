@@ -27,6 +27,10 @@ class UserDB {
     })
   }
 
+  helloWorld() {
+    console.log(`Hello world!`)
+  }
+
   // Create a new user
   async createUser(user) {
     try {
@@ -63,7 +67,7 @@ class UserDB {
 
       console.log(`user data: ${JSON.stringify(data, null, 2)}`)
 
-      await this.client.shutdown()
+      //await this.client.shutdown()
     } catch (err) {
       wlogger.error(`Error in cassandra-db/createUser().`)
       throw err
@@ -81,7 +85,7 @@ class UserDB {
       SELECT * FROM users
       `)
 
-      await this.client.shutdown()
+      //await this.client.shutdown()
 
       //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
       return data.rows
@@ -102,7 +106,7 @@ class UserDB {
         SELECT * FROM users WHERE email='${email}'
       `)
 
-      await this.client.shutdown()
+      //await this.client.shutdown()
 
       //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
       return data.rows
@@ -125,7 +129,7 @@ class UserDB {
         WHERE id=${id}
       `)
 
-      await this.client.shutdown()
+      //await this.client.shutdown()
     } catch (err) {
       wlogger.error(`Error in cassandra-db/updateUser()`, err)
       throw err
@@ -143,7 +147,7 @@ class UserDB {
         DELETE FROM users WHERE id=${id}
       `)
 
-      await this.client.shutdown()
+      //await this.client.shutdown()
     } catch (err) {
       wlogger.error(`Error in cassandra-db/deleteUser()`, err)
       throw err

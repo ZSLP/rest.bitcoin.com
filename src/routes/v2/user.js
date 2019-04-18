@@ -123,6 +123,8 @@ async function newUser(req, res, next) {
 //POST login route (optional, everyone has access)
 async function login2(req, res, next) {
   try {
+    //console.log(`req: ${util.inspect(req)}`)
+
     const user = req.body.user
 
     if (!user.email) {
