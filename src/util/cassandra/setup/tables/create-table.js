@@ -26,12 +26,12 @@ async function createTable() {
     CREATE TABLE users(
       id uuid PRIMARY KEY,
       email text,
-      pass_hash text,
       bch_addr text,
       first_name text,
       last_name text,
       display_name text,
       salt text,
+      hash text,
       misc text
     )
     `)

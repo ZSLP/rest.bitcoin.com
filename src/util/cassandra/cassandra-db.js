@@ -40,23 +40,23 @@ class UserDB {
       INSERT INTO users(
         id,
         email,
-        pass_hash,
         bch_addr,
         first_name,
         last_name,
         display_name,
         salt,
+        hash,
         misc
       )
       VALUES(
         uuid(),
         '${user.email}',
-        '${user.passwordHash}',
         '${user.bchAddr}',
         '${user.firstName}',
         '${user.lastName}',
         '${user.displayName}',
         '${user.salt}',
+        '${user.hash}',
         '${user.misc}'
       )
       `)

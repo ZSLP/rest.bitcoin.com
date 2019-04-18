@@ -69,7 +69,7 @@ var UserDB = /** @class */ (function () {
                         return [4 /*yield*/, this.client.connect()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.client.execute("\n      INSERT INTO users(\n        id,\n        email,\n        pass_hash,\n        bch_addr,\n        first_name,\n        last_name,\n        display_name,\n        salt,\n        misc\n      )\n      VALUES(\n        uuid(),\n        '" + user.email + "',\n        '" + user.passwordHash + "',\n        '" + user.bchAddr + "',\n        '" + user.firstName + "',\n        '" + user.lastName + "',\n        '" + user.displayName + "',\n        '" + user.salt + "',\n        '" + user.misc + "'\n      )\n      ")];
+                        return [4 /*yield*/, this.client.execute("\n      INSERT INTO users(\n        id,\n        email,\n        bch_addr,\n        first_name,\n        last_name,\n        display_name,\n        salt,\n        hash,\n        misc\n      )\n      VALUES(\n        uuid(),\n        '" + user.email + "',\n        '" + user.bchAddr + "',\n        '" + user.firstName + "',\n        '" + user.lastName + "',\n        '" + user.displayName + "',\n        '" + user.salt + "',\n        '" + user.hash + "',\n        '" + user.misc + "'\n      )\n      ")];
                     case 2:
                         data = _a.sent();
                         console.log("user data: " + JSON.stringify(data, null, 2));

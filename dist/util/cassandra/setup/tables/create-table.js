@@ -56,7 +56,7 @@ function createTable() {
                 case 1:
                     _a.sent();
                     console.log("Connect to database and keyspace 'restusers'.");
-                    return [4 /*yield*/, client.execute("\n    CREATE TABLE users(\n      id uuid PRIMARY KEY,\n      email text,\n      pass_hash text,\n      bch_addr text,\n      first_name text,\n      last_name text,\n      display_name text,\n      salt text,\n      misc text\n    )\n    ")];
+                    return [4 /*yield*/, client.execute("\n    CREATE TABLE users(\n      id uuid PRIMARY KEY,\n      email text,\n      bch_addr text,\n      first_name text,\n      last_name text,\n      display_name text,\n      salt text,\n      hash text,\n      misc text\n    )\n    ")];
                 case 2:
                     _a.sent();
                     console.log("table created");
