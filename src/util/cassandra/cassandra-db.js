@@ -91,6 +91,27 @@ class UserDB {
     }
   }
 
+  // lookup a user by email
+  async lookupUser(email) {
+    try {
+      wlogger.silly("Enteried cassandra-db/lookupUser()")
+
+      await this.client.connect()
+
+      const data = await this.client.execute(`
+        SELECT * FROM users WHERE email='${email}'
+      `)
+
+      await this.client.shutdown()
+
+      //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
+      return data.rows
+    } catch (err) {
+      wlogger.error(`Error in cassandra-db/readAllUsers()`, err)
+      throw err
+    }
+  }
+
   // update user data
   // TODO: Not yet working.
   async updateUser(id) {

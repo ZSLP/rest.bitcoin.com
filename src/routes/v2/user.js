@@ -34,6 +34,7 @@ router.get("/", root)
 router.post("/", newUser)
 router.post("/createUser", newUser2)
 router.post("/login", login)
+router.post("/login2", login2)
 router.get("/current", current)
 
 function root(req, res, next) {
@@ -116,6 +117,41 @@ async function newUser(req, res, next) {
     //return finalUser.save().then(() => res.json({ user: finalUser.toAuthJSON() }))
   } catch (err) {
     console.log(`Error in user.js/newUser(): `, err)
+  }
+}
+
+//POST login route (optional, everyone has access)
+async function login2(req, res, next) {
+  try {
+    const user = req.body.user
+
+    if (!user.email) {
+      res.status(422)
+      return res.json({
+        errors: {
+          email: "is required"
+        }
+      })
+    }
+
+    if (!user.password) {
+      res.status(422)
+      return res.json({
+        errors: {
+          password: "is required"
+        }
+      })
+    }
+
+    console.log(`Attempting to log in user: ${JSON.stringify(user, null, 2)}`)
+
+    const userData = await userDB.lookupUser(user.email)
+
+    console.log(`userData: ${JSON.stringify(userData, null, 2)}`)
+
+    return res.json({ success: true })
+  } catch (err) {
+    console.error(`Error in user.js/login2(): `, err)
   }
 }
 

@@ -35,7 +35,12 @@ async function createTable() {
       misc text
     )
     `)
-  console.log(`table created`)
+  console.log(`users table created.`)
+
+  await client.execute(`
+      CREATE INDEX ON users(email)
+    `)
+  console.log(`Index created on email column of users table.`)
 
   await client.shutdown()
   console.log("Disconnected from database.")

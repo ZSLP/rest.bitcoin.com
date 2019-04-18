@@ -59,9 +59,13 @@ function createTable() {
                     return [4 /*yield*/, client.execute("\n    CREATE TABLE users(\n      id uuid PRIMARY KEY,\n      email text,\n      bch_addr text,\n      first_name text,\n      last_name text,\n      display_name text,\n      salt text,\n      hash text,\n      misc text\n    )\n    ")];
                 case 2:
                     _a.sent();
-                    console.log("table created");
-                    return [4 /*yield*/, client.shutdown()];
+                    console.log("users table created.");
+                    return [4 /*yield*/, client.execute("\n      CREATE INDEX ON users(email)\n    ")];
                 case 3:
+                    _a.sent();
+                    console.log("Index created on email column of users table.");
+                    return [4 /*yield*/, client.shutdown()];
+                case 4:
                     _a.sent();
                     console.log("Disconnected from database.");
                     return [2 /*return*/];
