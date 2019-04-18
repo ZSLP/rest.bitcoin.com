@@ -80,8 +80,7 @@ var routeRateLimit = function (req, res, next) {
                             .slice(0, 4)
                             .join("/");
                     proRateLimits = req.locals.proLimit;
-                    console.log("route-ratelimit.ts req.user: " + util.inspect(req.user));
-                    console.log("req.payload: " + util.inspect(req.payload));
+                    if (!req.payload) return [3 /*break*/, 3];
                     if (!!proRateLimits) return [3 /*break*/, 3];
                     return [4 /*yield*/, validateJWT(req)];
                 case 1:

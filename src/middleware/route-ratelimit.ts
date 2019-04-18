@@ -65,21 +65,24 @@ const routeRateLimit = async function(
   // This boolean value is passed from the auth.js middleware.
   let proRateLimits = req.locals.proLimit
 
-  console.log(`route-ratelimit.ts req.user: ${util.inspect(req.user)}`)
-  console.log(`req.payload: ${util.inspect(req.payload)}`)
+  //console.log(`route-ratelimit.ts req.user: ${util.inspect(req.user)}`)
+  //console.log(`req.payload: ${util.inspect(req.payload)}`)
 
-  // Unlock the pro-tier rate limits if the user passed in a valid JWT token.
-  if(!proRateLimits) {
-    proRateLimits = await validateJWT(req)
+  // If no JWT token was provided, skip
+  if (req.payload) {
+    // Unlock the pro-tier rate limits if the user passed in a valid JWT token.
+    if (!proRateLimits) {
+      proRateLimits = await validateJWT(req)
 
-    console.log(` `)
-    console.log(`Retrieving users list from Cassandra DB:`)
+      console.log(` `)
+      console.log(`Retrieving users list from Cassandra DB:`)
 
-    const userDB = new UserDB()
-    const users = await userDB.readAllUsers()
-    console.log(`users: ${JSON.stringify(users,null,2)}`)
+      const userDB = new UserDB()
+      const users = await userDB.readAllUsers()
+      console.log(`users: ${JSON.stringify(users, null, 2)}`)
 
-    console.log(` `)
+      console.log(` `)
+    }
   }
 
   // Pro level rate limits
@@ -142,7 +145,7 @@ async function validateJWT(req: express.Request) {
     let id
 
     // Get the ID from the JWT token.
-    if(req.payload) {
+    if (req.payload) {
       id = req.payload.idconsole.log(` `)
     } else {
       return false
@@ -153,7 +156,7 @@ async function validateJWT(req: express.Request) {
 
     // By default, return false
     return false
-  } catch(err) {
+  } catch (err) {
     // By default, return false
     return false
   }
