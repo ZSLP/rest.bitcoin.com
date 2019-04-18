@@ -1,5 +1,8 @@
 /*
   A library for working with JWT tokens and hashing user passwords
+
+  TODO:
+  -Replace private key in generateJWT() with an environment variable.
 */
 
 "use strict"
@@ -31,10 +34,10 @@ class JWT {
 
   // Returns a Boolean. True if the hashed password matches the hash saved in
   // the user object. Otherwise returns false.
-  validatePassword(user) {
+  validatePassword(user, password) {
     try {
       const hash = crypto
-        .pbkdf2Sync(user.password, user.salt, 10000, 512, "sha512")
+        .pbkdf2Sync(password, user.salt, 10000, 512, "sha512")
         .toString("hex")
 
       return user.hash === hash
@@ -56,7 +59,7 @@ class JWT {
       return jwt.sign(
         {
           email: user.email,
-          id: user._id,
+          id: user.id,
           exp: parseInt(expirationDate.getTime() / 1000, 10)
         },
         "secret"
@@ -69,7 +72,7 @@ class JWT {
   toAuthJSON(user) {
     try {
       return {
-        _id: user._id,
+        id: user.id,
         email: user.email,
         token: this.generateJWT(user)
       }

@@ -115,9 +115,9 @@ var AuthMW = /** @class */ (function () {
                     case 1:
                         userDataRaw = _a.sent();
                         userData = userDataRaw[0];
-                        userData.password = password;
+                        //userData.password = password
                         console.log("userData before validating password: " + JSON.stringify(userData, null, 2));
-                        isValid = jwt.validatePassword(userData);
+                        isValid = jwt.validatePassword(userData, password);
                         if (isValid) {
                             console.log("Passwords match!");
                             return [2 /*return*/, done(null, userData)];

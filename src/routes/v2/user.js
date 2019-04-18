@@ -163,10 +163,10 @@ async function login2(req, res, next) {
           console.log(`passportUser: ${JSON.stringify(passportUser, null, 2)}`)
 
           //const user = passportUser
-          //user.token = passportUser.generateJWT()
+          passportUser.token = jwt.generateJWT(passportUser)
 
-          //return res.json({ user: user.toAuthJSON() })
-          return res.json({ success: true })
+          return res.json({ user: jwt.toAuthJSON(passportUser) })
+          //return res.json({ success: true })
         }
 
         //return status(400).info

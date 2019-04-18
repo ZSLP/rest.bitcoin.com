@@ -112,7 +112,7 @@ class AuthMW {
           // Lookup the user from the database.
           const userDataRaw = await userDB.lookupUser(email)
           const userData = userDataRaw[0]
-          userData.password = password
+          //userData.password = password
 
           console.log(
             `userData before validating password: ${JSON.stringify(
@@ -123,7 +123,7 @@ class AuthMW {
           )
 
           // Hash the password and see if it matches the saved hash.
-          const isValid = jwt.validatePassword(userData)
+          const isValid = jwt.validatePassword(userData, password)
 
           if (isValid) {
             console.log(`Passwords match!`)

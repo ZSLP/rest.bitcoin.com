@@ -1,5 +1,8 @@
 /*
   A library for working with JWT tokens and hashing user passwords
+
+  TODO:
+  -Replace private key in generateJWT() with an environment variable.
 */
 "use strict";
 var crypto = require("crypto");
@@ -27,10 +30,10 @@ var JWT = /** @class */ (function () {
     };
     // Returns a Boolean. True if the hashed password matches the hash saved in
     // the user object. Otherwise returns false.
-    JWT.prototype.validatePassword = function (user) {
+    JWT.prototype.validatePassword = function (user, password) {
         try {
             var hash = crypto
-                .pbkdf2Sync(user.password, user.salt, 10000, 512, "sha512")
+                .pbkdf2Sync(password, user.salt, 10000, 512, "sha512")
                 .toString("hex");
             return user.hash === hash;
         }
@@ -48,7 +51,7 @@ var JWT = /** @class */ (function () {
             expirationDate.setDate(today.getDate() + 30);
             return jwt.sign({
                 email: user.email,
-                id: user._id,
+                id: user.id,
                 exp: parseInt(expirationDate.getTime() / 1000, 10)
             }, "secret");
         }
@@ -59,7 +62,7 @@ var JWT = /** @class */ (function () {
     JWT.prototype.toAuthJSON = function (user) {
         try {
             return {
-                _id: user._id,
+                id: user.id,
                 email: user.email,
                 token: this.generateJWT(user)
             };
