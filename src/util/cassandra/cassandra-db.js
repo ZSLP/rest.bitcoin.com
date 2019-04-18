@@ -45,7 +45,6 @@ class UserDB {
         first_name,
         last_name,
         display_name,
-        salt
         misc
       )
       VALUES(
@@ -56,7 +55,6 @@ class UserDB {
         '${user.firstName}',
         '${user.lastName}',
         '${user.displayName}',
-        '${user.salt}',
         '${user.misc}'
       )
       `)
@@ -65,7 +63,7 @@ class UserDB {
 
       await this.client.shutdown()
     } catch (err) {
-      wlogger.error(`Error in cassandra-db/createUser()`, err)
+      wlogger.error(`Error in cassandra-db/createUser().`)
       throw err
     }
   }

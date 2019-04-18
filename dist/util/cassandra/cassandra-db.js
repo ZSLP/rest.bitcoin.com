@@ -79,9 +79,8 @@ var UserDB = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 4:
                         err_1 = _a.sent();
-                        console.error(err_1);
-                        wlogger.error("Error in cassandra-db/createUser()", err_1);
-                        return [3 /*break*/, 5];
+                        wlogger.error("Error in cassandra-db/createUser().");
+                        throw err_1;
                     case 5: return [2 /*return*/];
                 }
             });
@@ -112,7 +111,7 @@ var UserDB = /** @class */ (function () {
                     case 4:
                         err_2 = _a.sent();
                         wlogger.error("Error in cassandra-db/readAllUsers()", err_2);
-                        return [3 /*break*/, 5];
+                        throw err_2;
                     case 5: return [2 /*return*/];
                 }
             });
@@ -141,7 +140,7 @@ var UserDB = /** @class */ (function () {
                     case 4:
                         err_3 = _a.sent();
                         wlogger.error("Error in cassandra-db/updateUser()", err_3);
-                        return [3 /*break*/, 5];
+                        throw err_3;
                     case 5: return [2 /*return*/];
                 }
             });
@@ -169,7 +168,7 @@ var UserDB = /** @class */ (function () {
                     case 4:
                         err_4 = _a.sent();
                         wlogger.error("Error in cassandra-db/deleteUser()", err_4);
-                        return [3 /*break*/, 5];
+                        throw err_4;
                     case 5: return [2 /*return*/];
                 }
             });

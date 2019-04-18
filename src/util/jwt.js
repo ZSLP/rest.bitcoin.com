@@ -24,6 +24,7 @@ class JWT {
 
       return user
     } catch (err) {
+      wlogger.error(`Error in jwt.js/setPassword().`)
       throw err
     }
   }
@@ -77,3 +78,5 @@ class JWT {
     }
   }
 }
+
+module.exports = JWT

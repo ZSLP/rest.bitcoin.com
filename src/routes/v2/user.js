@@ -13,6 +13,9 @@ const router = express.Router()
 
 const wlogger = require("../../util/winston-logging")
 
+const JWT = require("../../util/jwt")
+const jwt = new JWT()
+
 //const mongoose = require("mongoose")
 
 //Configure mongoose's promise to global promise
@@ -41,13 +44,30 @@ async function newUser2(req, res, next) {
   try {
     const user = req.body.user
 
-    if (!user || user === "") {
+    if (!user.email) {
       res.status(422)
-      return res.json({ error: "invalid user data" })
+      return res.json({
+        errors: {
+          email: "is required"
+        }
+      })
     }
 
+    if (!user.password) {
+      res.status(422)
+      return res.json({
+        errors: {
+          password: "is required"
+        }
+      })
+    }
+
+    console.log(`Original user object: ${JSON.stringify(user, null, 2)}`)
+
     // TODO: replace password with a hash.
-    user.passwordHash = user.password
+    const newUser = jwt.setPassword(user)
+
+    console.log(`New user object: ${JSON.stringify(newUser, null, 2)}`)
 
     await userDB.createUser(user)
 

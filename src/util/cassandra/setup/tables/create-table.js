@@ -31,7 +31,6 @@ async function createTable() {
       first_name text,
       last_name text,
       display_name text,
-      salt text,
       misc text
     )
     `)
