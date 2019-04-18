@@ -18,6 +18,12 @@ const LocalStrategy = require("passport-local")
 const mongoose = require("mongoose")
 const wlogger = require("../util/winston-logging")
 
+const UserDB = require("../util/cassandra/cassandra-db")
+const userDB = new UserDB()
+
+const JWT = require("../util/jwt")
+const jwt = new JWT()
+
 // Used for debugging and iterrogating JS objects.
 const util = require("util")
 util.inspect.defaultOptions = { depth: 2 }
@@ -100,9 +106,35 @@ class AuthMW {
           passReqToCallback: true,
           session: false
         },
-        (req, email, password, done) => {
+        async (req, email, password, done) => {
           console.log(`Checking against local strategy.`)
 
+          // Lookup the user from the database.
+          const userDataRaw = await userDB.lookupUser(email)
+          const userData = userDataRaw[0]
+          userData.password = password
+
+          console.log(
+            `userData before validating password: ${JSON.stringify(
+              userData,
+              null,
+              2
+            )}`
+          )
+
+          // Hash the password and see if it matches the saved hash.
+          const isValid = jwt.validatePassword(userData)
+
+          if (isValid) {
+            console.log(`Passwords match!`)
+            return done(null, userData)
+          }
+
+          return done(null, false, {
+            errors: { "email or password": "is invalid" }
+          })
+
+          /*
           Users.findOne({ email })
             .then(user => {
               if (!user || !user.validatePassword(password)) {
@@ -114,6 +146,7 @@ class AuthMW {
               return done(null, user)
             })
             .catch(done)
+          */
         }
       )
     )

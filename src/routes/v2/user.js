@@ -21,7 +21,7 @@ const jwt = new JWT()
 //Configure mongoose's promise to global promise
 //mongoose.Promise = global.Promise
 
-//const passport = require("passport")
+const passport = require("passport")
 //const auth = require("../auth")
 //require("../../models/users")
 //const Users = mongoose.model("Users")
@@ -151,7 +151,28 @@ async function login2(req, res, next) {
 
     console.log(`userData: ${JSON.stringify(userData, null, 2)}`)
 
-    return res.json({ success: true })
+    //return res.json({ success: true })
+
+    return passport.authenticate(
+      "local",
+      { session: false },
+      (err, passportUser, info) => {
+        if (err) return next(err)
+
+        if (passportUser) {
+          console.log(`passportUser: ${JSON.stringify(passportUser, null, 2)}`)
+
+          //const user = passportUser
+          //user.token = passportUser.generateJWT()
+
+          //return res.json({ user: user.toAuthJSON() })
+          return res.json({ success: true })
+        }
+
+        //return status(400).info
+        return res.status(400)
+      }
+    )(req, res, next)
   } catch (err) {
     console.error(`Error in user.js/login2(): `, err)
   }
