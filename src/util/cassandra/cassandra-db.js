@@ -19,16 +19,15 @@ const util = require("util")
 util.inspect.defaultOptions = { depth: 1 }
 
 class UserDB {
-  constructor() {
+  constructor(keyspace) {
+    let thisKeyspace = keyspace
+    if (!keyspace || keyspace === "") thisKeyspace = "users"
+
     this.client = new cassandra.Client({
       contactPoints: ["127.0.0.1"],
       localDataCenter: "datacenter1",
-      keyspace: "restusers"
+      keyspace: thisKeyspace
     })
-  }
-
-  helloWorld() {
-    console.log(`Hello world!`)
   }
 
   // Create a new user
@@ -36,7 +35,7 @@ class UserDB {
     try {
       wlogger.silly("Enteried cassandra-db/createUser()")
 
-      console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
+      //console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
 
       await this.client.connect()
 
@@ -65,9 +64,7 @@ class UserDB {
       )
       `)
 
-      console.log(`user data: ${JSON.stringify(data, null, 2)}`)
-
-      //await this.client.shutdown()
+      //console.log(`user data: ${JSON.stringify(data, null, 2)}`)
     } catch (err) {
       wlogger.error(`Error in cassandra-db/createUser().`)
       throw err
@@ -84,8 +81,6 @@ class UserDB {
       const data = await this.client.execute(`
       SELECT * FROM users
       `)
-
-      //await this.client.shutdown()
 
       //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
       return data.rows
@@ -109,7 +104,7 @@ class UserDB {
       //await this.client.shutdown()
 
       //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
-      return data.rows
+      return data.rows[0]
     } catch (err) {
       wlogger.error(`Error in cassandra-db/readAllUsers()`, err)
       throw err

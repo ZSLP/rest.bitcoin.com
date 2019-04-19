@@ -24,6 +24,12 @@ class CassandraTestHelper {
       const query = `CREATE KEYSPACE test WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1}`
       await this.client.execute(query)
       //console.log(`Keyspace 'test' created`)
+
+      this.client = new cassandra.Client({
+        contactPoints: ["127.0.0.1"],
+        localDataCenter: "datacenter1",
+        keyspace: "test"
+      })
     } catch (err) {
       console.error(`Error in cassandra-test-helper.js/createKeyspace().`)
       throw err
@@ -46,11 +52,12 @@ class CassandraTestHelper {
 
   // Create a table for tests to run against
   async createTable() {
-    await this.client.connect()
-    //console.log(`Connect to database and keyspace 'test'.`)
+    try {
+      await this.client.connect()
+      //console.log(`Connect to database and keyspace 'test'.`)
 
-    // Create users table
-    await client.execute(`
+      // Create users table
+      await this.client.execute(`
       CREATE TABLE users(
         id uuid PRIMARY KEY,
         email text,
@@ -64,20 +71,29 @@ class CassandraTestHelper {
       )
       `)
 
-    // Create index on the email column, to allow email look-up of users.
-    await client.execute(`
+      // Create index on the email column, to allow email look-up of users.
+      await this.client.execute(`
         CREATE INDEX ON users(email)
       `)
+    } catch (err) {
+      console.error(`Error in cassandra-test-helper.js/createTable().`)
+      throw err
+    }
   }
 
   // Delete the users table.
   async deleteTable() {
-    await this.client.connect()
+    try {
+      await this.client.connect()
 
-    // Delete the table.
-    await client.execute(`
+      // Delete the table.
+      await this.client.execute(`
       DROP TABLE users
       `)
+    } catch (err) {
+      console.error(`Error in cassandra-test-helper.js/deleteTable().`)
+      throw err
+    }
   }
 }
 
