@@ -2,20 +2,20 @@
   Delete the users table
 */
 
-"use strict";
+"use strict"
 
-const cassandra = require('cassandra-driver')
+const cassandra = require("cassandra-driver")
 
 // Used for debugging and iterrogating JS objects.
-const util = require("util");
-util.inspect.defaultOptions = {depth: 1};
+const util = require("util")
+util.inspect.defaultOptions = { depth: 1 }
 
 //Connect to the cluster
 var client = new cassandra.Client({
   contactPoints: ["127.0.0.1"],
-  localDataCenter: 'datacenter1',
+  localDataCenter: "datacenter1",
   keyspace: "restusers"
-});
+})
 
 // Read users and print to console
 async function deleteTable() {
@@ -24,10 +24,10 @@ async function deleteTable() {
 
   await client.execute(`
     DROP TABLE users
-    `);
+    `)
   console.log(`table created`)
 
-  await client.shutdown();
-  console.log("Disconnected from database.");
+  await client.shutdown()
+  console.log("Disconnected from database.")
 }
 deleteTable()
