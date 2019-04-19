@@ -36,6 +36,7 @@ router.post("/createUser", newUser2)
 router.post("/login", login)
 router.post("/login2", login2)
 router.get("/current", current)
+router.post("/delete", deleteUser)
 
 function root(req, res, next) {
   return res.json({ status: "user" })
@@ -45,6 +46,7 @@ async function newUser2(req, res, next) {
   try {
     const user = req.body.user
 
+    // Input Validation.
     if (!user) {
       res.status(422)
       return res.json({
@@ -72,9 +74,11 @@ async function newUser2(req, res, next) {
       })
     }
 
-    console.log(`Original user object: ${JSON.stringify(user, null, 2)}`)
+    //console.log(`Original user object: ${JSON.stringify(user, null, 2)}`)
 
-    // TODO: replace password with a hash.
+    // Replace the password with a cryptographic hash.
+    // This is best-practice, as the DB doesn't actually store the users password,
+    // so no chance of leaking private user data if the DB is hacked.
     jwt.setPassword(user)
 
     //console.log(`New user object: ${JSON.stringify(newUser, null, 2)}`)
@@ -132,9 +136,17 @@ async function newUser(req, res, next) {
 //POST login route (optional, everyone has access)
 async function login2(req, res, next) {
   try {
-    //console.log(`req: ${util.inspect(req)}`)
-
     const user = req.body.user
+
+    // Input Validation.
+    if (!user) {
+      res.status(422)
+      return res.json({
+        errors: {
+          message: "user body required"
+        }
+      })
+    }
 
     if (!user.email) {
       res.status(422)
@@ -238,6 +250,32 @@ function current(req, res, next) {
 
     return res.json({ user: user.toAuthJSON() })
   })
+}
+
+async function deleteUser(req, res, next) {
+  try {
+    if (!req.payload) {
+      res.status(422)
+      return res.json({ error: "jwt token is required" })
+    }
+
+    const id = req.payload.id
+
+    if (!id) {
+      res.status(422)
+      return res.json({ error: "jwt token is required" })
+    }
+
+    const data = await userDB.findById(id)
+    console.log(`data: ${util.inspect(data)}`)
+
+    await userDB.deleteUser(id)
+
+    return res.json({ success: true })
+  } catch (err) {
+    console.error("Errror in users.js/deleteUser()")
+    throw err
+  }
 }
 
 module.exports = { router }

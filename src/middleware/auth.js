@@ -110,10 +110,10 @@ class AuthMW {
           console.log(`Checking against local strategy.`)
 
           // Lookup the user from the database.
-          const userDataRaw = await userDB.lookupUser(email)
-          const userData = userDataRaw[0]
-          //userData.password = password
+          const userData = await userDB.lookupUser(email)
+          //console.log(`userData: ${util.inspect(userDataRaw)}`)
 
+          /*
           console.log(
             `userData before validating password: ${JSON.stringify(
               userData,
@@ -121,6 +121,7 @@ class AuthMW {
               2
             )}`
           )
+          */
 
           // Hash the password and see if it matches the saved hash.
           const isValid = jwt.validatePassword(userData, password)

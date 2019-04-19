@@ -106,7 +106,27 @@ class UserDB {
       //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
       return data.rows[0]
     } catch (err) {
-      wlogger.error(`Error in cassandra-db/readAllUsers()`, err)
+      wlogger.error(`Error in cassandra-db/readAllUsers()`)
+      throw err
+    }
+  }
+
+  async findById(id) {
+    try {
+      wlogger.silly("Enteried cassandra-db/findById()")
+
+      await this.client.connect()
+
+      const data = await this.client.execute(`
+        SELECT * FROM users WHERE id='${id}'
+      `)
+
+      //await this.client.shutdown()
+
+      //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
+      return data.rows[0]
+    } catch (err) {
+      wlogger.error(`Error in cassandra-db/findById()`)
       throw err
     }
   }

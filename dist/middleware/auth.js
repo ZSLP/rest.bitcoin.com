@@ -106,17 +106,26 @@ var AuthMW = /** @class */ (function () {
             passReqToCallback: true,
             session: false
         }, function (req, email, password, done) { return __awaiter(_this_1, void 0, void 0, function () {
-            var userDataRaw, userData, isValid;
+            var userData, isValid;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         console.log("Checking against local strategy.");
-                        return [4 /*yield*/, userDB.lookupUser(email)];
+                        return [4 /*yield*/, userDB.lookupUser(email)
+                            //console.log(`userData: ${util.inspect(userDataRaw)}`)
+                            /*
+                            console.log(
+                              `userData before validating password: ${JSON.stringify(
+                                userData,
+                                null,
+                                2
+                              )}`
+                            )
+                            */
+                            // Hash the password and see if it matches the saved hash.
+                        ];
                     case 1:
-                        userDataRaw = _a.sent();
-                        userData = userDataRaw[0];
-                        //userData.password = password
-                        console.log("userData before validating password: " + JSON.stringify(userData, null, 2));
+                        userData = _a.sent();
                         isValid = jwt.validatePassword(userData, password);
                         if (isValid) {
                             console.log("Passwords match!");
