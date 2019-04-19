@@ -21,7 +21,7 @@ util.inspect.defaultOptions = { depth: 1 }
 class UserDB {
   constructor(keyspace) {
     let thisKeyspace = keyspace
-    if (!keyspace || keyspace === "") thisKeyspace = "users"
+    if (!keyspace || keyspace === "") thisKeyspace = "restusers"
 
     this.client = new cassandra.Client({
       contactPoints: ["127.0.0.1"],

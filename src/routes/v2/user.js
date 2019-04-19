@@ -45,6 +45,15 @@ async function newUser2(req, res, next) {
   try {
     const user = req.body.user
 
+    if (!user) {
+      res.status(422)
+      return res.json({
+        errors: {
+          message: "user body required"
+        }
+      })
+    }
+
     if (!user.email) {
       res.status(422)
       return res.json({

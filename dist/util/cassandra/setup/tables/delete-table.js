@@ -37,14 +37,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var cassandra = require('cassandra-driver');
+var cassandra = require("cassandra-driver");
 // Used for debugging and iterrogating JS objects.
 var util = require("util");
 util.inspect.defaultOptions = { depth: 1 };
 //Connect to the cluster
 var client = new cassandra.Client({
     contactPoints: ["127.0.0.1"],
-    localDataCenter: 'datacenter1',
+    localDataCenter: "datacenter1",
     keyspace: "restusers"
 });
 // Read users and print to console

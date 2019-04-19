@@ -49,16 +49,16 @@ var wlogger = require("../winston-logging");
 var util = require("util");
 util.inspect.defaultOptions = { depth: 1 };
 var UserDB = /** @class */ (function () {
-    function UserDB() {
+    function UserDB(keyspace) {
+        var thisKeyspace = keyspace;
+        if (!keyspace || keyspace === "")
+            thisKeyspace = "restusers";
         this.client = new cassandra.Client({
             contactPoints: ["127.0.0.1"],
             localDataCenter: "datacenter1",
-            keyspace: "restusers"
+            keyspace: thisKeyspace
         });
     }
-    UserDB.prototype.helloWorld = function () {
-        console.log("Hello world!");
-    };
     // Create a new user
     UserDB.prototype.createUser = function (user) {
         return __awaiter(this, void 0, void 0, function () {
@@ -68,14 +68,16 @@ var UserDB = /** @class */ (function () {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
                         wlogger.silly("Enteried cassandra-db/createUser()");
-                        console.log("user data received: " + JSON.stringify(user, null, 2));
+                        //console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
                         return [4 /*yield*/, this.client.connect()];
                     case 1:
+                        //console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
                         _a.sent();
-                        return [4 /*yield*/, this.client.execute("\n      INSERT INTO users(\n        id,\n        email,\n        bch_addr,\n        first_name,\n        last_name,\n        display_name,\n        salt,\n        hash,\n        misc\n      )\n      VALUES(\n        uuid(),\n        '" + user.email + "',\n        '" + user.bchAddr + "',\n        '" + user.firstName + "',\n        '" + user.lastName + "',\n        '" + user.displayName + "',\n        '" + user.salt + "',\n        '" + user.hash + "',\n        '" + user.misc + "'\n      )\n      ")];
+                        return [4 /*yield*/, this.client.execute("\n      INSERT INTO users(\n        id,\n        email,\n        bch_addr,\n        first_name,\n        last_name,\n        display_name,\n        salt,\n        hash,\n        misc\n      )\n      VALUES(\n        uuid(),\n        '" + user.email + "',\n        '" + user.bchAddr + "',\n        '" + user.firstName + "',\n        '" + user.lastName + "',\n        '" + user.displayName + "',\n        '" + user.salt + "',\n        '" + user.hash + "',\n        '" + user.misc + "'\n      )\n      ")
+                            //console.log(`user data: ${JSON.stringify(data, null, 2)}`)
+                        ];
                     case 2:
                         data = _a.sent();
-                        console.log("user data: " + JSON.stringify(data, null, 2));
                         return [3 /*break*/, 4];
                     case 3:
                         err_1 = _a.sent();
@@ -99,12 +101,10 @@ var UserDB = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         return [4 /*yield*/, this.client.execute("\n      SELECT * FROM users\n      ")
-                            //await this.client.shutdown()
                             //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
                         ];
                     case 2:
                         data = _a.sent();
-                        //await this.client.shutdown()
                         //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
                         return [2 /*return*/, data.rows];
                     case 3:
@@ -136,7 +136,7 @@ var UserDB = /** @class */ (function () {
                         data = _a.sent();
                         //await this.client.shutdown()
                         //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
-                        return [2 /*return*/, data.rows];
+                        return [2 /*return*/, data.rows[0]];
                     case 3:
                         err_3 = _a.sent();
                         wlogger.error("Error in cassandra-db/readAllUsers()", err_3);
