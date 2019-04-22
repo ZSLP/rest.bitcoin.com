@@ -206,11 +206,13 @@ describe("#user", () => {
       const options = {
         method: "POST",
         url: `${SERVER}user/delete`,
-        headers: { Authorization: `Bearer ${jwtToken}` }
+        headers: { Authorization: `Token ${jwtToken}` }
       }
 
       const result = await axios(options)
-      console.log(`result: ${util.inspect(result)}`)
+      //console.log(`result: ${util.inspect(result)}`)
+
+      assert.equal(result.data.success, true)
     })
   })
 })

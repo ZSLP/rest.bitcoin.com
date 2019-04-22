@@ -118,7 +118,7 @@ class UserDB {
       await this.client.connect()
 
       const data = await this.client.execute(`
-        SELECT * FROM users WHERE id='${id}'
+        SELECT * FROM users WHERE id=${id}
       `)
 
       //await this.client.shutdown()

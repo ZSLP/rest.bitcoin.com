@@ -267,7 +267,7 @@ async function deleteUser(req, res, next) {
     }
 
     const data = await userDB.findById(id)
-    console.log(`data: ${util.inspect(data)}`)
+    //console.log(`data: ${util.inspect(data)}`)
 
     await userDB.deleteUser(id)
 

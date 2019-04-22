@@ -157,7 +157,7 @@ var UserDB = /** @class */ (function () {
                         return [4 /*yield*/, this.client.connect()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.client.execute("\n        SELECT * FROM users WHERE id='" + id + "'\n      ")
+                        return [4 /*yield*/, this.client.execute("\n        SELECT * FROM users WHERE id=" + id + "\n      ")
                             //await this.client.shutdown()
                             //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
                         ];
