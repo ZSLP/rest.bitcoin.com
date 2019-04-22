@@ -14,7 +14,7 @@ util.inspect.defaultOptions = { depth: 1 }
 import * as express from "express"
 const RateLimit = require("express-rate-limit")
 
-const Users = require("../models/users")
+//const Users = require("../models/users")
 
 const UserDB = require("../util/cassandra/cassandra-db")
 
@@ -151,7 +151,8 @@ async function validateJWT(req: express.Request) {
       return false
     }
 
-    const user = await Users.findById(id)
+    //const user = await Users.findById(id)
+    const user = await UserDB.findById(id)
     console.log(`user: ${util.inspect(user)}`)
 
     // By default, return false

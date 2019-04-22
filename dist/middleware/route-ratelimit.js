@@ -47,7 +47,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var util = require("util");
 util.inspect.defaultOptions = { depth: 1 };
 var RateLimit = require("express-rate-limit");
-var Users = require("../models/users");
+//const Users = require("../models/users")
 var UserDB = require("../util/cassandra/cassandra-db");
 // Set max requests per minute
 var maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
@@ -158,7 +158,7 @@ function validateJWT(req) {
                     else {
                         return [2 /*return*/, false];
                     }
-                    return [4 /*yield*/, Users.findById(id)];
+                    return [4 /*yield*/, UserDB.findById(id)];
                 case 1:
                     user = _a.sent();
                     console.log("user: " + util.inspect(user));

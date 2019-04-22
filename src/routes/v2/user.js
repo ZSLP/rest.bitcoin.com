@@ -25,7 +25,7 @@ const passport = require("passport")
 //const auth = require("../auth")
 //require("../../models/users")
 //const Users = mongoose.model("Users")
-const Users = require("../../models/users")
+//const Users = require("../../models/users")
 
 const UserDB = require("../../util/cassandra/cassandra-db")
 const userDB = new UserDB()
