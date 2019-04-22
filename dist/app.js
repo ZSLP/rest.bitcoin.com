@@ -17,7 +17,7 @@ var debug = require("debug")("rest-cloud:server");
 var http = require("http");
 var cors = require("cors");
 // Auth libraries.
-var mongoose = require("mongoose");
+//const mongoose = require("mongoose")
 var AuthMW = require("./middleware/auth");
 var jwtAuth = require("./middleware/jwt-auth");
 //const UserDB = require("./util/cassandra/cassandra-db")
@@ -82,16 +82,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 // By default, the AUTH env var is set to false.
 process.env.AUTH ? process.env.AUTH : "true";
-if (process.env.AUTH === "true") {
-    //Configure mongoose's promise to global promise
-    mongoose.Promise = global.Promise;
-    mongoose.set('useCreateIndex', true); // Stop deprecation warning.
-    //Configure Mongoose
-    mongoose.connect('mongodb://localhost:27017/pro-auth', { useNewUrlParser: true });
-    //mongoose.set('debug', true);
-    // Add the users model.
-    //require('./models/users')
-}
 // Make io accessible to our router
 app.use(function (req, res, next) {
     req.io = io;

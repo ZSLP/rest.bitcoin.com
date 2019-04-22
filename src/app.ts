@@ -23,7 +23,7 @@ const http = require("http")
 const cors = require("cors")
 
 // Auth libraries.
-const mongoose = require("mongoose")
+//const mongoose = require("mongoose")
 const AuthMW = require("./middleware/auth")
 const jwtAuth = require("./middleware/jwt-auth")
 //const UserDB = require("./util/cassandra/cassandra-db")
@@ -107,7 +107,7 @@ app.use(express.static(path.join(__dirname, "public")))
 
 // By default, the AUTH env var is set to false.
 process.env.AUTH ? process.env.AUTH : "true"
-if(process.env.AUTH === "true") {
+/*if(process.env.AUTH === "true") {
   //Configure mongoose's promise to global promise
   mongoose.Promise = global.Promise;
   mongoose.set('useCreateIndex', true) // Stop deprecation warning.
@@ -118,6 +118,7 @@ if(process.env.AUTH === "true") {
   // Add the users model.
   //require('./models/users')
 }
+*/
 
 interface ICustomRequest extends express.Request {
   io: any

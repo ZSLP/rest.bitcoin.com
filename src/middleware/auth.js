@@ -15,7 +15,7 @@ const passport = require("passport")
 const BasicStrategy = require("passport-http").BasicStrategy
 const AnonymousStrategy = require("passport-anonymous")
 const LocalStrategy = require("passport-local")
-const mongoose = require("mongoose")
+//const mongoose = require("mongoose")
 const wlogger = require("../util/winston-logging")
 
 const UserDB = require("../util/cassandra/cassandra-db")
