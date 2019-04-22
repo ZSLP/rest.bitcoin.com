@@ -32,17 +32,14 @@ const userDB = new UserDB()
 
 router.get("/", root)
 router.post("/", newUser)
-router.post("/createUser", newUser2)
 router.post("/login", login)
-router.post("/login2", login2)
-router.get("/current", current)
 router.post("/delete", deleteUser)
 
 function root(req, res, next) {
   return res.json({ status: "user" })
 }
 
-async function newUser2(req, res, next) {
+async function newUser(req, res, next) {
   try {
     const user = req.body.user
 
@@ -91,50 +88,8 @@ async function newUser2(req, res, next) {
   }
 }
 
-//POST new user route (optional, everyone has access)
-async function newUser(req, res, next) {
-  try {
-    const {
-      body: { user }
-    } = req
-
-    console.log(`user: ${util.inspect(user)}`)
-
-    if (!user.email) {
-      return res.status(422).json({
-        errors: {
-          email: "is required"
-        }
-      })
-    }
-
-    if (!user.password) {
-      return res.status(422).json({
-        errors: {
-          password: "is required"
-        }
-      })
-    }
-
-    const finalUser = new Users(user)
-
-    finalUser.setPassword(user.password)
-    console.log(`password set`)
-
-    await finalUser.save()
-
-    console.log(`user saved!`)
-
-    return res.json({ user: finalUser.toAuthJSON() })
-
-    //return finalUser.save().then(() => res.json({ user: finalUser.toAuthJSON() }))
-  } catch (err) {
-    console.log(`Error in user.js/newUser(): `, err)
-  }
-}
-
 //POST login route (optional, everyone has access)
-async function login2(req, res, next) {
+async function login(req, res, next) {
   try {
     const user = req.body.user
 
@@ -197,59 +152,6 @@ async function login2(req, res, next) {
   } catch (err) {
     console.error(`Error in user.js/login2(): `, err)
   }
-}
-
-//POST login route (optional, everyone has access)
-function login(req, res, next) {
-  const {
-    body: { user }
-  } = req
-
-  if (!user.email) {
-    return res.status(422).json({
-      errors: {
-        email: "is required"
-      }
-    })
-  }
-
-  if (!user.password) {
-    return res.status(422).json({
-      errors: {
-        password: "is required"
-      }
-    })
-  }
-
-  return passport.authenticate(
-    "local",
-    { session: false },
-    (err, passportUser, info) => {
-      if (err) return next(err)
-
-      if (passportUser) {
-        const user = passportUser
-        user.token = passportUser.generateJWT()
-
-        return res.json({ user: user.toAuthJSON() })
-      }
-
-      return status(400).info
-    }
-  )(req, res, next)
-}
-
-//GET current route (required, only authenticated users have access)
-function current(req, res, next) {
-  const {
-    payload: { id }
-  } = req
-
-  return Users.findById(id).then(user => {
-    if (!user) return res.sendStatus(400)
-
-    return res.json({ user: user.toAuthJSON() })
-  })
 }
 
 async function deleteUser(req, res, next) {

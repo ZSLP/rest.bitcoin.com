@@ -151,7 +151,7 @@ class UserDB {
     }
   }
 
-  // Read users and print to console
+  // Delete users from the DB.
   async deleteUser(id) {
     try {
       wlogger.silly("Enteried cassandra-db/deleteUser()")

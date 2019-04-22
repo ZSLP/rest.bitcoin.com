@@ -24,7 +24,7 @@ describe("#user", () => {
       try {
         const options = {
           method: "POST",
-          url: `${SERVER}user/createUser`
+          url: `${SERVER}user/`
         }
 
         const result = await axios(options)
@@ -44,7 +44,7 @@ describe("#user", () => {
 
         const options = {
           method: "POST",
-          url: `${SERVER}user/createUser`,
+          url: `${SERVER}user/`,
           data: { user }
         }
 
@@ -66,7 +66,7 @@ describe("#user", () => {
 
         const options = {
           method: "POST",
-          url: `${SERVER}user/createUser`,
+          url: `${SERVER}user/`,
           data: { user }
         }
 
@@ -88,7 +88,7 @@ describe("#user", () => {
 
       const options = {
         method: "POST",
-        url: `${SERVER}user/createUser`,
+        url: `${SERVER}user/`,
         data: { user }
       }
 
@@ -105,7 +105,7 @@ describe("#user", () => {
       try {
         const options = {
           method: "POST",
-          url: `${SERVER}user/login2`
+          url: `${SERVER}user/login`
         }
 
         const result = await axios(options)
@@ -125,7 +125,7 @@ describe("#user", () => {
 
         const options = {
           method: "POST",
-          url: `${SERVER}user/login2`,
+          url: `${SERVER}user/login`,
           data: { user }
         }
 
@@ -147,7 +147,7 @@ describe("#user", () => {
 
         const options = {
           method: "POST",
-          url: `${SERVER}user/login2`,
+          url: `${SERVER}user/login`,
           data: { user }
         }
 
@@ -169,7 +169,7 @@ describe("#user", () => {
 
       const options = {
         method: "POST",
-        url: `${SERVER}user/login2`,
+        url: `${SERVER}user/login`,
         data: { user }
       }
 

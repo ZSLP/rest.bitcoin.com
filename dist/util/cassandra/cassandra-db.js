@@ -203,7 +203,7 @@ var UserDB = /** @class */ (function () {
             });
         });
     };
-    // Read users and print to console
+    // Delete users from the DB.
     UserDB.prototype.deleteUser = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var err_6;
