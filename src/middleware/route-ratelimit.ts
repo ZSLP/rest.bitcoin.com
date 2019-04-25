@@ -51,6 +51,27 @@ const routeRateLimit = async function(
   // Disable rate limiting if 0 passed from RATE_LIMIT_MAX_REQUESTS
   if (maxRequests === 0) return next()
 
+  // This boolean value is passed from the auth.js middleware.
+  let proRateLimits = req.locals.proLimit
+  //console.log(`proRateLimits: ${proRateLimits}`)
+
+  //console.log(`route-ratelimit.ts req.user: ${util.inspect(req.user)}`)
+  //console.log(`req.payload: ${util.inspect(req.payload)}`)
+
+  // If no JWT token was provided, skip
+  if (req.payload) {
+    // Unlock the pro-tier rate limits if the user passed in a valid JWT token.
+    if (!proRateLimits) {
+      const user = await getUserFromJWT(req)
+
+      // Enable pro-tier rate limits for this user.
+      if(user) {
+        console.log(`${user.email} (${user.id}) passed in valid JWT`)
+        proRateLimits = true
+      }
+    }
+  }
+
   // Current route
   const rateLimitTier = req.locals.proLimit ? "PRO" : "BASIC"
   const path = req.baseUrl + req.path
@@ -61,29 +82,6 @@ const routeRateLimit = async function(
       .split("/")
       .slice(0, 4)
       .join("/")
-
-  // This boolean value is passed from the auth.js middleware.
-  let proRateLimits = req.locals.proLimit
-
-  //console.log(`route-ratelimit.ts req.user: ${util.inspect(req.user)}`)
-  //console.log(`req.payload: ${util.inspect(req.payload)}`)
-
-  // If no JWT token was provided, skip
-  if (req.payload) {
-    // Unlock the pro-tier rate limits if the user passed in a valid JWT token.
-    if (!proRateLimits) {
-      proRateLimits = await validateJWT(req)
-
-      console.log(` `)
-      console.log(`Retrieving users list from Cassandra DB:`)
-
-      const userDB = new UserDB()
-      const users = await userDB.readAllUsers()
-      console.log(`users: ${JSON.stringify(users, null, 2)}`)
-
-      console.log(` `)
-    }
-  }
 
   // Pro level rate limits
   if (proRateLimits) {
@@ -140,24 +138,30 @@ const routeRateLimit = async function(
   uniqueRateLimits[route](req, res, next)
 }
 
-async function validateJWT(req: express.Request) {
+// Find the user in the DB from the ID passed in the JWT.
+async function getUserFromJWT(req: express.Request) {
   try {
     let id
 
     // Get the ID from the JWT token.
     if (req.payload) {
-      id = req.payload.idconsole.log(` `)
+      id = req.payload.id
     } else {
       return false
     }
 
     //const user = await Users.findById(id)
-    const user = await UserDB.findById(id)
-    console.log(`user: ${util.inspect(user)}`)
+    const userDB = new UserDB()
+    const user = await userDB.findById(id)
+    //console.log(`user: ${util.inspect(user)}`)
+
+    // Return the user data, if the user was successfully located.
+    if(user) return user
 
     // By default, return false
     return false
   } catch (err) {
+    console.log(`Error in validateJWT(): `, err)
     // By default, return false
     return false
   }

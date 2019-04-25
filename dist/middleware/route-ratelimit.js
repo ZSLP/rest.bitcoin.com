@@ -59,7 +59,7 @@ var PRO_RPM = 10 * maxRequests;
 var uniqueRateLimits = {};
 var routeRateLimit = function (req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
-        var rateLimitTier, path, route, proRateLimits, userDB, users;
+        var proRateLimits, user, rateLimitTier, path, route;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -69,8 +69,23 @@ var routeRateLimit = function (req, res, next) {
                     // Disable rate limiting if 0 passed from RATE_LIMIT_MAX_REQUESTS
                     if (maxRequests === 0)
                         return [2 /*return*/, next()
-                            // Current route
+                            // This boolean value is passed from the auth.js middleware.
                         ];
+                    proRateLimits = req.locals.proLimit;
+                    if (!req.payload) return [3 /*break*/, 2];
+                    if (!!proRateLimits) return [3 /*break*/, 2];
+                    return [4 /*yield*/, getUserFromJWT(req)
+                        // Enable pro-tier rate limits for this user.
+                    ];
+                case 1:
+                    user = _a.sent();
+                    // Enable pro-tier rate limits for this user.
+                    if (user) {
+                        console.log(user.email + " (" + user.id + ") passed in valid JWT");
+                        proRateLimits = true;
+                    }
+                    _a.label = 2;
+                case 2:
                     rateLimitTier = req.locals.proLimit ? "PRO" : "BASIC";
                     path = req.baseUrl + req.path;
                     route = rateLimitTier +
@@ -79,22 +94,6 @@ var routeRateLimit = function (req, res, next) {
                             .split("/")
                             .slice(0, 4)
                             .join("/");
-                    proRateLimits = req.locals.proLimit;
-                    if (!req.payload) return [3 /*break*/, 3];
-                    if (!!proRateLimits) return [3 /*break*/, 3];
-                    return [4 /*yield*/, validateJWT(req)];
-                case 1:
-                    proRateLimits = _a.sent();
-                    console.log(" ");
-                    console.log("Retrieving users list from Cassandra DB:");
-                    userDB = new UserDB();
-                    return [4 /*yield*/, userDB.readAllUsers()];
-                case 2:
-                    users = _a.sent();
-                    console.log("users: " + JSON.stringify(users, null, 2));
-                    console.log(" ");
-                    _a.label = 3;
-                case 3:
                     // Pro level rate limits
                     if (proRateLimits) {
                         // TODO: replace the console.logs with calls to our logging system.
@@ -143,9 +142,10 @@ var routeRateLimit = function (req, res, next) {
     });
 };
 exports.routeRateLimit = routeRateLimit;
-function validateJWT(req) {
+// Find the user in the DB from the ID passed in the JWT.
+function getUserFromJWT(req) {
     return __awaiter(this, void 0, void 0, function () {
-        var id, user, err_1;
+        var id, userDB, user, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -153,19 +153,29 @@ function validateJWT(req) {
                     id = void 0;
                     // Get the ID from the JWT token.
                     if (req.payload) {
-                        id = req.payload.idconsole.log(" ");
+                        id = req.payload.id;
                     }
                     else {
                         return [2 /*return*/, false];
                     }
-                    return [4 /*yield*/, UserDB.findById(id)];
+                    userDB = new UserDB();
+                    return [4 /*yield*/, userDB.findById(id)
+                        //console.log(`user: ${util.inspect(user)}`)
+                        // Return the user data, if the user was successfully located.
+                    ];
                 case 1:
                     user = _a.sent();
-                    console.log("user: " + util.inspect(user));
+                    //console.log(`user: ${util.inspect(user)}`)
+                    // Return the user data, if the user was successfully located.
+                    if (user)
+                        return [2 /*return*/, user
+                            // By default, return false
+                        ];
                     // By default, return false
                     return [2 /*return*/, false];
                 case 2:
                     err_1 = _a.sent();
+                    console.log("Error in validateJWT(): ", err_1);
                     // By default, return false
                     return [2 /*return*/, false];
                 case 3: return [2 /*return*/];

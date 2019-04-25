@@ -14,6 +14,8 @@ util.inspect.defaultOptions = { depth: 1 }
 //const SERVER = `https://rest.btctest.net/v2/`
 const SERVER = `http://localhost:3000/v2/`
 
+const TEST_JWT = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QwM0B0ZXN0LmNvbSIsImlkIjoiNDRkNWE1ZmEtMjkxMC00OThjLTkzNGQtYmZiMzExN2M4NGE4IiwiZXhwIjoxNTU4NzkzMzEwLCJpYXQiOjE1NTYyMDEzMTB9.6ILaujeLq7vLUGLkeRMWOtEqQY7gJhPmEvBzadvvUR8`
+
 describe("#rate limits", () => {
   it("should get control/getInfo() with no auth", async () => {
     const options = {
@@ -28,7 +30,7 @@ describe("#rate limits", () => {
     assert.equal(result.status, 200)
     assert.hasAnyKeys(result.data, ["version"])
   })
-  /*
+
   it("should trigger rate-limit handler if rate limits exceeds 60 request per minute", async () => {
     try {
       // Actual rate limit is 60 per minute X 4 nodes = 240 rpm.
@@ -38,7 +40,7 @@ describe("#rate limits", () => {
       }
 
       const promises = []
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 65; i++) {
         const promise = axios(options)
         promises.push(promise)
       }
@@ -52,23 +54,22 @@ describe("#rate limits", () => {
       assert.equal(err.response.status, 429)
       assert.include(err.response.data.error, "Too many requests")
     }
-  })
-*/
+    // Override default timeout for this test.
+  }).timeout(20000)
 
-  it("should recognize an auth token", async () => {
+  it("should unlock pro-tier for a valid JWT token", async () => {
     try {
       // Actual rate limit is 60 per minute X 4 nodes = 240 rpm.
       const options = {
         method: "GET",
-        url: `${SERVER}control/getInfo`,
+        url: `${SERVER}block/detailsByHeight/579817`,
         headers: {
-          Authorization:
-            "Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwiaWQiOiI1Y2E3NWQxMjk3NTNiMzc3ODRkNzVjYjUiLCJleHAiOjE1NTk2NTYyMTAsImlhdCI6MTU1NDQ3MjIxMH0.Uc5OgKe1AEHEs0m4INOKG6npAbE2qh3gAwia5TgLB6I"
+          Authorization: `Token ${TEST_JWT}`
         }
       }
 
       const promises = []
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 65; i++) {
         const promise = axios(options)
         promises.push(promise)
       }
@@ -80,10 +81,12 @@ describe("#rate limits", () => {
     } catch (err) {
       console.log(`err.response: ${util.inspect(err.response)}`)
 
-      //assert.equal(err.response.status, 429)
-      //assert.include(err.response.data.error, "Too many requests")
+      assert.equal(true, false, "Unexpected result!")
     }
-  })
+    // Override default timeout for this test.
+  }).timeout(20000)
+
+  // TODO: Add test for invalid JWT token.
 
   it("should not trigger rate-limit handler if correct pro-tier password is used", async () => {
     try {
@@ -104,7 +107,7 @@ describe("#rate limits", () => {
       }
 
       const promises = []
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 65; i++) {
         const promise = axios(options)
         promises.push(promise)
       }
@@ -121,5 +124,6 @@ describe("#rate limits", () => {
         "This error handler should not have been triggered. Is the password correct?"
       )
     }
-  })
+    // Override default timeout for this test.
+  }).timeout(20000)
 })
