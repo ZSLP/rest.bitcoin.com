@@ -86,9 +86,33 @@ describe("#rate limits", () => {
     // Override default timeout for this test.
   }).timeout(20000)
 
-  // TODO: Add test for invalid JWT token.
+  it("should default to freemium tier with invalid JWT", async () => {
+    try {
+      // Actual rate limit is 60 per minute X 4 nodes = 240 rpm.
+      const options = {
+        method: "GET",
+        url: `${SERVER}blockchain/getBestBlockHash`
+      }
 
-  it("should not trigger rate-limit handler if correct pro-tier password is used", async () => {
+      const promises = []
+      for (let i = 0; i < 65; i++) {
+        const promise = axios(options)
+        promises.push(promise)
+      }
+
+      await Promise.all(promises)
+
+      assert.equal(true, false, "Unexpected result!")
+    } catch (err) {
+      //console.log(`err.response: ${util.inspect(err.response)}`)
+
+      assert.equal(err.response.status, 429)
+      assert.include(err.response.data.error, "Too many requests")
+    }
+    // Override default timeout for this test.
+  }).timeout(20000)
+
+  it("should not trigger rate-limit handler if correct hard-coded pro-tier password is used", async () => {
     try {
       const username = "BITBOX"
 
