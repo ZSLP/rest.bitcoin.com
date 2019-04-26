@@ -14,8 +14,6 @@ util.inspect.defaultOptions = { depth: 1 }
 import * as express from "express"
 const RateLimit = require("express-rate-limit")
 
-//const Users = require("../models/users")
-
 const UserDB = require("../util/cassandra/cassandra-db")
 
 // Set max requests per minute
@@ -40,6 +38,7 @@ declare global {
   }
 }
 
+// Middleware executed on each API call.
 const routeRateLimit = async function(
   req: express.Request,
   res: express.Response,
@@ -48,15 +47,13 @@ const routeRateLimit = async function(
   // Create a res.locals object if not passed in.
   if (!req.locals) req.locals = {}
 
+  // Dev override:
   // Disable rate limiting if 0 passed from RATE_LIMIT_MAX_REQUESTS
   if (maxRequests === 0) return next()
 
   // This boolean value is passed from the auth.js middleware.
   let proRateLimits = req.locals.proLimit
   //console.log(`proRateLimits: ${proRateLimits}`)
-
-  //console.log(`route-ratelimit.ts req.user: ${util.inspect(req.user)}`)
-  //console.log(`req.payload: ${util.inspect(req.payload)}`)
 
   // If no JWT token was provided, skip
   if (req.payload) {

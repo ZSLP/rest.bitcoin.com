@@ -1,12 +1,23 @@
 /*
-  Handle authorization for bypassing rate limits.
+  Handle authorization for bypassing rate limits. Uses three different types
+  of authorization:
+
+  1) Default is 'Anonymous Authentication', which unlocks the freemimum tier by
+  default.
+  2) Hard-coded 'Basic Authentication' is a token that does not expire and is
+  provided to buisiness partners.
+  3) JWT-based 'Local Authentication' is used for normal users that pay to
+  access the premium pro-tier services.
 
   This file uses the passport npm library to check the header of each REST API
-  call for the prescence of a Basic authorization header:
+  call for the presence of a Basic Authorization header:
   https://en.wikipedia.org/wiki/Basic_access_authentication
 
   If the header is found and validated, the req.locals.proLimit Boolean value
   is set and passed to the route-ratelimits.ts middleware.
+
+  Anonymous and Basic authentication is setup in the middleware at startup.
+  The JWT-based Local Authentication is evaluated at every API call.
 */
 
 "use strict"
@@ -15,7 +26,6 @@ const passport = require("passport")
 const BasicStrategy = require("passport-http").BasicStrategy
 const AnonymousStrategy = require("passport-anonymous")
 const LocalStrategy = require("passport-local")
-//const mongoose = require("mongoose")
 const wlogger = require("../util/winston-logging")
 
 const UserDB = require("../util/cassandra/cassandra-db")
@@ -43,7 +53,6 @@ class AuthMW {
     _this = this
 
     // Initialize passport for 'anonymous' authentication.
-
     passport.use(
       new AnonymousStrategy({ passReqToCallback: true }, function(
         req,
@@ -54,8 +63,6 @@ class AuthMW {
         console.log(`anonymous auth handler triggered.`)
       })
     )
-
-    //passport.use(new AnonymousStrategy())
 
     // Initialize passport for 'basic' authentication.
     passport.use(
@@ -82,6 +89,7 @@ class AuthMW {
             const thisPass = PRO_PASS[i]
 
             if (password === thisPass) {
+              // Log usage of hard-coded pro-tier passwords.
               console.log(`${req.url} called by ${password.slice(0, 6)}`)
               wlogger.verbose(`${req.url} called by ${password.slice(0, 6)}`)
 
@@ -113,54 +121,31 @@ class AuthMW {
           const userData = await userDB.lookupUser(email)
           //console.log(`userData: ${util.inspect(userDataRaw)}`)
 
-          /*
-          console.log(
-            `userData before validating password: ${JSON.stringify(
-              userData,
-              null,
-              2
-            )}`
-          )
-          */
-
           // Hash the password and see if it matches the saved hash.
           const isValid = jwt.validatePassword(userData, password)
 
           if (isValid) {
-            console.log(`Passwords match!`)
+            //console.log(`Passwords match!`)
             return done(null, userData)
           }
 
           return done(null, false, {
             errors: { "email or password": "is invalid" }
           })
-
-          /*
-          Users.findOne({ email })
-            .then(user => {
-              if (!user || !user.validatePassword(password)) {
-                return done(null, false, {
-                  errors: { "email or password": "is invalid" }
-                })
-              }
-
-              return done(null, user)
-            })
-            .catch(done)
-          */
         }
       )
     )
   }
 
   // Middleware called by the route.
+  // This function is executed only once, at startup. It initalizes the web
+  // server by adding the basic and anonymous authentication to the middleware
+  // stack.
   mw() {
-    console.log(`authenticating with basic or anonymous. (1)`)
+    //console.log(`authenticating with basic or anonymous. (1)`)
     const obj = passport.authenticate(["basic", "anonymous"], {
       session: false
     })
-
-    console.log(`obj: ${util.inspect(obj)}`)
 
     return obj
   }

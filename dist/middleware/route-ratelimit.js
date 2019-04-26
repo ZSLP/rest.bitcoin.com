@@ -47,7 +47,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var util = require("util");
 util.inspect.defaultOptions = { depth: 1 };
 var RateLimit = require("express-rate-limit");
-//const Users = require("../models/users")
 var UserDB = require("../util/cassandra/cassandra-db");
 // Set max requests per minute
 var maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
@@ -57,6 +56,7 @@ var maxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
 var PRO_RPM = 10 * maxRequests;
 // Unique route mapped to its rate limit
 var uniqueRateLimits = {};
+// Middleware executed on each API call.
 var routeRateLimit = function (req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
         var proRateLimits, user, rateLimitTier, path, route;
@@ -66,6 +66,7 @@ var routeRateLimit = function (req, res, next) {
                     // Create a res.locals object if not passed in.
                     if (!req.locals)
                         req.locals = {};
+                    // Dev override:
                     // Disable rate limiting if 0 passed from RATE_LIMIT_MAX_REQUESTS
                     if (maxRequests === 0)
                         return [2 /*return*/, next()

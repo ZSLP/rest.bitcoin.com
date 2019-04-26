@@ -17,11 +17,8 @@ var debug = require("debug")("rest-cloud:server");
 var http = require("http");
 var cors = require("cors");
 // Auth libraries.
-//const mongoose = require("mongoose")
 var AuthMW = require("./middleware/auth");
 var jwtAuth = require("./middleware/jwt-auth");
-//const UserDB = require("./util/cassandra/cassandra-db")
-//const userDB = new UserDB()
 var BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder");
 var zmq = require("zeromq");
 var sock = zmq.socket("sub");

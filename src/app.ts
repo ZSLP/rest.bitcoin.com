@@ -23,11 +23,8 @@ const http = require("http")
 const cors = require("cors")
 
 // Auth libraries.
-//const mongoose = require("mongoose")
 const AuthMW = require("./middleware/auth")
 const jwtAuth = require("./middleware/jwt-auth")
-//const UserDB = require("./util/cassandra/cassandra-db")
-//const userDB = new UserDB()
 
 const BitcoinCashZMQDecoder = require("bitcoincash-zmq-decoder")
 

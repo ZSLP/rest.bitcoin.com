@@ -5,13 +5,13 @@
 "use strict";
 var jwt = require("express-jwt");
 var getTokenFromHeaders = function (req) {
-    console.log("Searching headers for a JWT token.");
+    //console.log(`Searching headers for a JWT token.`)
     var authorization = req.headers.authorization;
     if (authorization && authorization.split(" ")[0] === "Token") {
-        console.log("JWT found.");
+        //console.log(`JWT found.`)
         return authorization.split(" ")[1];
     }
-    console.log("JWT not found.");
+    //console.log(`JWT not found.`)
     return null;
 };
 var jwtAuth = {
