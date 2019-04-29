@@ -10,6 +10,7 @@ util.inspect.defaultOptions = { depth: 1 }
 
 const express = require("express")
 const router = express.Router()
+const CashID = require("cashid")
 
 const wlogger = require("../../util/winston-logging")
 
@@ -43,10 +44,13 @@ function root(req, res, next) {
 async function cashId(req, res, next) {
   try {
     const body = req.body
-    const query = req.query
-
     console.log(`body params: ${JSON.stringify(body, null, 2)}`)
-    console.log(`query params: ${JSON.stringify(query, null, 2)}`)
+
+    const domain = "rest.bchtest.net"
+    const path = "/v2/user/cashid"
+    const cashid = new CashID(domain, path)
+    const parsed = cashid.validateRequest(body)
+    console.log(`parsed: ${util.inspect(parsed)}`)
 
     return res.json({ success: true })
   } catch (err) {
