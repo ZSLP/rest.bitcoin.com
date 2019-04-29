@@ -34,9 +34,24 @@ router.get("/", root)
 router.post("/", newUser)
 router.post("/login", login)
 router.post("/delete", deleteUser)
+router.post("/cashid", cashId)
 
 function root(req, res, next) {
   return res.json({ status: "user" })
+}
+
+async function cashId(req, res, next) {
+  try {
+    const body = req.body
+    const query = req.query
+
+    console.log(`body params: ${JSON.stringify(body, null, 2)}`)
+    console.log(`query params: ${JSON.stringify(query, null, 2)}`)
+
+    return res.json({ success: true })
+  } catch (err) {
+    console.error(`Error in user.js/cashId(): `, err)
+  }
 }
 
 async function newUser(req, res, next) {
