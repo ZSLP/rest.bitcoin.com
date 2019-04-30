@@ -129,6 +129,19 @@ describe("#Cassandra DB", () => {
       )
       assert.equal(user.hash, "pqr")
     })
+
+    it("should return undefined when BCH address can not be found", async () => {
+      const bchAddr = "bitcoincash:qq5vwpjez9cjch5mtgv2tpc8vjfnsjuatyzzt6aaaa"
+
+      const user = await cassandra.findByBchAddr(bchAddr)
+      //console.log(`user: ${util.inspect(user)}`)
+
+      assert.equal(
+        user,
+        undefined,
+        "Returns undefined when user can not be found."
+      )
+    })
   })
 
   describe("#deleteUser", () => {
