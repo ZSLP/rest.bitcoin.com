@@ -49,8 +49,14 @@ async function cashId(req, res, next) {
     const domain = "rest.bchtest.net"
     const path = "/v2/user/cashid"
     const cashid = new CashID(domain, path)
+
+    // This will throw an error if the CashID request can not be validated.
     const parsed = cashid.validateRequest(body)
     console.log(`parsed: ${util.inspect(parsed)}`)
+
+    // If user does not exist, create a new user.
+
+    // Login user and return JWT token.
 
     return res.json({ success: true })
   } catch (err) {
