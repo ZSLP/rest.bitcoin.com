@@ -61,7 +61,7 @@ async function cashId(req, res, next) {
     // If user does not exist, create a new user.
     if (!user) {
       const newUser = {
-        email: "",
+        email: "no@emailprovided.com",
         bchAddr: bchAddr
       }
 
@@ -78,6 +78,8 @@ async function cashId(req, res, next) {
     return res.json({ user: jwt.toAuthJSON(passportUser) })
   } catch (err) {
     console.error(`Error in user.js/cashId(): `, err)
+    res.status(500)
+    return res.json({ error: err.message })
   }
 }
 
