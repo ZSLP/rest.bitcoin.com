@@ -117,14 +117,14 @@ var UserDB = /** @class */ (function () {
         });
     };
     // lookup a user by email
-    UserDB.prototype.lookupUser = function (email) {
+    UserDB.prototype.findByEmail = function (email) {
         return __awaiter(this, void 0, void 0, function () {
             var data, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        wlogger.silly("Enteried cassandra-db/lookupUser()");
+                        wlogger.silly("Enteried cassandra-db/findByEmail()");
                         return [4 /*yield*/, this.client.connect()];
                     case 1:
                         _a.sent();
@@ -139,8 +139,38 @@ var UserDB = /** @class */ (function () {
                         return [2 /*return*/, data.rows[0]];
                     case 3:
                         err_3 = _a.sent();
-                        wlogger.error("Error in cassandra-db/readAllUsers()");
+                        wlogger.error("Error in cassandra-db/findByEmail()");
                         throw err_3;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    // lookup a user by email
+    UserDB.prototype.findByBchAddr = function (bchAddr) {
+        return __awaiter(this, void 0, void 0, function () {
+            var data, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        wlogger.silly("Enteried cassandra-db/findByBchAddr()");
+                        return [4 /*yield*/, this.client.connect()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.client.execute("\n        SELECT * FROM users WHERE bch_addr='" + bchAddr + "'\n      ")
+                            //await this.client.shutdown()
+                            //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
+                        ];
+                    case 2:
+                        data = _a.sent();
+                        //await this.client.shutdown()
+                        //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
+                        return [2 /*return*/, data.rows[0]];
+                    case 3:
+                        err_4 = _a.sent();
+                        wlogger.error("Error in cassandra-db/findByBchAddr()");
+                        throw err_4;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -148,7 +178,7 @@ var UserDB = /** @class */ (function () {
     };
     UserDB.prototype.findById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, err_4;
+            var data, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -167,9 +197,9 @@ var UserDB = /** @class */ (function () {
                         //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
                         return [2 /*return*/, data.rows[0]];
                     case 3:
-                        err_4 = _a.sent();
+                        err_5 = _a.sent();
                         wlogger.error("Error in cassandra-db/findById()");
-                        throw err_4;
+                        throw err_5;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -179,7 +209,7 @@ var UserDB = /** @class */ (function () {
     // TODO: Not yet working.
     UserDB.prototype.updateUser = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var err_5;
+            var err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -195,9 +225,9 @@ var UserDB = /** @class */ (function () {
                         _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        err_5 = _a.sent();
-                        wlogger.error("Error in cassandra-db/updateUser()", err_5);
-                        throw err_5;
+                        err_6 = _a.sent();
+                        wlogger.error("Error in cassandra-db/updateUser()", err_6);
+                        throw err_6;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -206,7 +236,7 @@ var UserDB = /** @class */ (function () {
     // Delete users from the DB.
     UserDB.prototype.deleteUser = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var err_6;
+            var err_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -222,9 +252,9 @@ var UserDB = /** @class */ (function () {
                         _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        err_6 = _a.sent();
-                        wlogger.error("Error in cassandra-db/deleteUser()", err_6);
-                        throw err_6;
+                        err_7 = _a.sent();
+                        wlogger.error("Error in cassandra-db/deleteUser()", err_7);
+                        throw err_7;
                     case 4: return [2 /*return*/];
                 }
             });

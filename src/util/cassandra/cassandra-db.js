@@ -91,9 +91,9 @@ class UserDB {
   }
 
   // lookup a user by email
-  async lookupUser(email) {
+  async findByEmail(email) {
     try {
-      wlogger.silly("Enteried cassandra-db/lookupUser()")
+      wlogger.silly("Enteried cassandra-db/findByEmail()")
 
       await this.client.connect()
 
@@ -106,7 +106,28 @@ class UserDB {
       //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
       return data.rows[0]
     } catch (err) {
-      wlogger.error(`Error in cassandra-db/readAllUsers()`)
+      wlogger.error(`Error in cassandra-db/findByEmail()`)
+      throw err
+    }
+  }
+
+  // lookup a user by email
+  async findByBchAddr(bchAddr) {
+    try {
+      wlogger.silly("Enteried cassandra-db/findByBchAddr()")
+
+      await this.client.connect()
+
+      const data = await this.client.execute(`
+        SELECT * FROM users WHERE bch_addr='${bchAddr}'
+      `)
+
+      //await this.client.shutdown()
+
+      //console.log(`users: ${JSON.stringify(data.rows, null, 2)}`)
+      return data.rows[0]
+    } catch (err) {
+      wlogger.error(`Error in cassandra-db/findByBchAddr()`)
       throw err
     }
   }

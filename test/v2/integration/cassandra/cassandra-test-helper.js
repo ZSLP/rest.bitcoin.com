@@ -75,6 +75,10 @@ class CassandraTestHelper {
       await this.client.execute(`
         CREATE INDEX ON users(email)
       `)
+
+      await this.client.execute(`
+          CREATE INDEX ON users(bch_addr)
+        `)
     } catch (err) {
       console.error(`Error in cassandra-test-helper.js/createTable().`)
       throw err

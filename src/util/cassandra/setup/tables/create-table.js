@@ -42,6 +42,11 @@ async function createTable() {
     `)
   console.log(`Index created on email column of users table.`)
 
+  await client.execute(`
+      CREATE INDEX ON users(bch_addr)
+    `)
+  console.log(`Index created on bch_addr column of users table.`)
+
   await client.shutdown()
   console.log("Disconnected from database.")
 }

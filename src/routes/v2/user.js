@@ -148,7 +148,7 @@ async function login(req, res, next) {
 
     console.log(`Attempting to log in user: ${JSON.stringify(user, null, 2)}`)
 
-    const userData = await userDB.lookupUser(user.email)
+    const userData = await userDB.findByEmail(user.email)
 
     console.log(`userData: ${JSON.stringify(userData, null, 2)}`)
 

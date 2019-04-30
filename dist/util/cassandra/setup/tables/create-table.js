@@ -64,8 +64,12 @@ function createTable() {
                 case 3:
                     _a.sent();
                     console.log("Index created on email column of users table.");
-                    return [4 /*yield*/, client.shutdown()];
+                    return [4 /*yield*/, client.execute("\n      CREATE INDEX ON users(bch_addr)\n    ")];
                 case 4:
+                    _a.sent();
+                    console.log("Index created on bch_addr column of users table.");
+                    return [4 /*yield*/, client.shutdown()];
+                case 5:
                     _a.sent();
                     console.log("Disconnected from database.");
                     return [2 /*return*/];
