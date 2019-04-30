@@ -74,8 +74,10 @@ async function cashId(req, res, next) {
     }
 
     // Generate and return a JWT token.
-    passportUser.token = jwt.generateJWT(passportUser)
-    return res.json({ user: jwt.toAuthJSON(passportUser) })
+    const token = jwt.generateJWT(user)
+    console.log(`token: ${JSON.stringify(token, null, 2)}`)
+
+    return res.json({ token })
   } catch (err) {
     console.error(`Error in user.js/cashId(): `, err)
     res.status(500)
