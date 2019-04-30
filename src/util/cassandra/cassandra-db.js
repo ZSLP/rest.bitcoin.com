@@ -35,7 +35,7 @@ class UserDB {
     try {
       wlogger.silly("Enteried cassandra-db/createUser()")
 
-      //console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
+      console.log(`user data received: ${JSON.stringify(user, null, 2)}`)
 
       await this.client.connect()
 
