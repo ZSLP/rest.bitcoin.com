@@ -44,7 +44,7 @@ function root(req, res, next) {
 async function cashId(req, res, next) {
   try {
     const body = req.body
-    console.log(`body params: ${JSON.stringify(body, null, 2)}`)
+    //console.log(`body params: ${JSON.stringify(body, null, 2)}`)
 
     const domain = "rest.bchtest.net"
     const path = "/v2/user/cashid"

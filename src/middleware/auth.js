@@ -118,7 +118,7 @@ class AuthMW {
           console.log(`Checking against local strategy.`)
 
           // Lookup the user from the database.
-          const userData = await userDB.lookupUser(email)
+          const userData = await userDB.findByEmail(email)
           //console.log(`userData: ${util.inspect(userDataRaw)}`)
 
           // Hash the password and see if it matches the saved hash.
