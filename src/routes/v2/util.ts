@@ -89,6 +89,11 @@ async function validateAddressSingle(
   }
 }
 
+// Dev Note: CT 5/2/19 - Bug reported in GitHub Issue #398:
+// https://github.com/Bitcoin-com/rest.bitcoin.com/issues/398
+// The full node does not respond correctly to parallel requests, returning the
+// same value multiple times instead of unique values. Synchronous requests
+// must be made to avoid this bug.
 async function validateAddressBulk(
   req: express.Request,
   res: express.Response,
@@ -146,24 +151,22 @@ async function validateAddressBulk(
       requestConfig
     } = routeUtils.setEnvVars()
 
-    // Loop through each address and creates an array of requests to call in parallel
-    const promises = addresses.map(async (address: any) => {
+    const results = []
+
+    for(let i=0; i < addresses.length; i++) {
+      const address = addresses[i]
 
       requestConfig.data.id = "validateaddress"
       requestConfig.data.method = "validateaddress"
       requestConfig.data.params = [address]
 
-      return await BitboxHTTP(requestConfig)
-    })
+      const result = await BitboxHTTP(requestConfig)
 
-    // Wait for all parallel Insight requests to return.
-    const axiosResult: Array<any> = await axios.all(promises)
-
-    // Retrieve the data part of the result.
-    const result = axiosResult.map(x => x.data.result)
+      results.push(result.data.result)
+    }
 
     res.status(200)
-    return res.json(result)
+    return res.json(results)
 
   } catch (err) {
     // Attempt to decode the error message.
