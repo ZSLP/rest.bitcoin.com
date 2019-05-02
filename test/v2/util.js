@@ -296,5 +296,30 @@ describe("#Util", () => {
         "isscript"
       ])
     })
+
+    // Integration test only.
+    if (process.env.TEST !== "unit") {
+      // CT 5/2/19 - Test case added to assert bug in GitHub Issue 398 is fixed.
+      // https://github.com/Bitcoin-com/rest.bitcoin.com/issues/398
+      it("should validate different addresses", async () => {
+        const addr1 = `bchtest:qqtkxypv6ll7g84z3plqhye3lxajufnm2cnga89ewe`
+        const addr2 = `bchtest:qzu92mq3hfa5xt8kezg8f6ak4dxefja79qsega5dsr`
+        req.body.addresses = [addr1, addr2]
+
+        const result = await validateAddressBulk(req, res)
+        //console.log(`result: ${util.inspect(result)}`)
+
+        assert.equal(
+          result[0].address,
+          addr1,
+          "Input and output addr should be the same."
+        )
+        assert.equal(
+          result[1].address,
+          addr2,
+          "Input and output addr should be the same."
+        )
+      })
+    }
   })
 })
