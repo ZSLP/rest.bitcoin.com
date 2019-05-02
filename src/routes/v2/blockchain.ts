@@ -447,22 +447,22 @@ async function getMempoolEntryBulk(
       requestConfig
     } = routeUtils.setEnvVars()
 
-    // Loop through each txid and creates an array of requests to call in parallel
-    const promises = txids.map(async (txid: any) => {
+    const results = []
+
+    for(let i=0; i < txids.length; i++) {
+      const txid = txids[i]
+
       requestConfig.data.id = "getmempoolentry"
       requestConfig.data.method = "getmempoolentry"
       requestConfig.data.params = [txid]
 
-      return await BitboxHTTP(requestConfig)
-    })
+      const result = await BitboxHTTP(requestConfig)
 
-    const axiosResult: Array<any> = await axios.all(promises)
-
-    // Extract the data component from the axios response.
-    const result = axiosResult.map(x => x.data.result)
+      results.push(result.data.result)
+    }
 
     res.status(200)
-    return res.json(result)
+    return res.json(results)
   } catch (err) {
     // Attempt to decode the error message.
     const { msg, status } = routeUtils.decodeError(err)
