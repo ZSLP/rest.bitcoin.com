@@ -200,6 +200,11 @@ async function detailsByHeightSingle(
   }
 }
 
+// Dev Note: CT 5/2/19 - Bug reported in GitHub Issue #398:
+// https://github.com/Bitcoin-com/rest.bitcoin.com/issues/398
+// The full node does not respond correctly to parallel requests, returning the
+// same value multiple times instead of unique values. Synchronous requests
+// must be made to avoid this bug.
 async function detailsByHeightBulk(
   req: express.Request,
   res: express.Response,
@@ -244,25 +249,27 @@ async function detailsByHeightBulk(
       requestConfig
     } = routeUtils.setEnvVars()
 
-    // Loop through each height and creates an array of requests to call in parallel
-    const promises = heights.map(async (height: any) => {
+    const result = []
+
+    for(let i=0; i < heights.length; i++) {
+      const height = heights[i]
+
+      // Get the block hash from the full node.
       requestConfig.data.id = "getblockhash"
       requestConfig.data.method = "getblockhash"
       requestConfig.data.params = [parseInt(height)]
-
       const response = await BitboxHTTP(requestConfig)
 
+      // Retrieve the block hash corresponding to the height.
       const hash = response.data.result
 
+      // Get block data from Insight API.
       const axiosResult = await axios.get(
         `${process.env.BITCOINCOM_BASEURL}block/${hash}`
       )
 
-      return axiosResult.data
-    })
-
-    // Wait for all parallel Insight requests to return.
-    let result: Array<any> = await axios.all(promises)
+      result.push(axiosResult.data)
+    }
 
     res.status(200)
     return res.json(result)

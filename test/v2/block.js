@@ -606,5 +606,23 @@ describe("#Block", () => {
       assert.isArray(result)
       assert.equal(result.length, 2, "2 outputs for 2 inputs")
     })
+
+    // Integration-only test
+    if (process.env.TEST !== "unit") {
+      it("should get different details for different block heights", async () => {
+        const height1 = 500000
+        const height2 = 500001
+        req.body = {
+          heights: [height1, height2]
+        }
+
+        // Call the details API.
+        const result = await detailsByHeightBulk(req, res)
+        //console.log(`result: ${util.inspect(result)}`)
+
+        assert.equal(result[0].height, height1)
+        assert.equal(result[1].height, height2)
+      })
+    }
   })
 })
