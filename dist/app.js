@@ -57,6 +57,22 @@ var rawtransactionsV2 = require("./routes/v2/rawtransactions");
 var transactionV2 = require("./routes/v2/transaction");
 var utilV2 = require("./routes/v2/util");
 var slpV2 = require("./routes/v2/slp");
+// v3
+var indexV3 = require("./routes/v3/index");
+var healthCheckV3 = require("./routes/v3/health-check");
+var addressV3 = require("./routes/v3/address");
+var blockV3 = require("./routes/v3/block");
+var blockchainV3 = require("./routes/v3/blockchain");
+var controlV3 = require("./routes/v3/control");
+var generatingV3 = require("./routes/v3/generating");
+var miningV3 = require("./routes/v3/mining");
+var networkV3 = require("./routes/v3/network");
+var rawtransactionsV3 = require("./routes/v3/rawtransactions");
+var transactionV3 = require("./routes/v3/transaction");
+var utilV3 = require("./routes/v3/util");
+var slpV3 = require("./routes/v3/slp");
+var bitcore = require("./routes/v3/bitcore");
+var blockbook = require("./routes/v3/blockbook");
 require("dotenv").config();
 var app = express();
 app.locals.env = process.env;
@@ -96,6 +112,7 @@ app.use("/", req_logging_1.logReqInfo);
 // )
 var v1prefix = "v1";
 var v2prefix = "v2";
+var v3prefix = "v3";
 app.use("/", indexV1);
 app.use("/" + v1prefix + "/" + "health-check", healthCheckV1);
 app.use("/" + v1prefix + "/" + "address", addressV1);
@@ -114,6 +131,7 @@ app.use("/" + v1prefix + "/" + "slp", slpV1);
 // Instantiate the authorization middleware, used to implement pro-tier rate limiting.
 var auth = new AuthMW();
 app.use("/" + v2prefix + "/", auth.mw());
+app.use("/" + v3prefix + "/", auth.mw());
 // Rate limit on all v2 routes
 app.use("/" + v2prefix + "/", route_ratelimit_1.routeRateLimit);
 app.use("/", indexV2);
@@ -130,6 +148,22 @@ app.use("/" + v2prefix + "/" + "rawtransactions", rawtransactionsV2.router);
 app.use("/" + v2prefix + "/" + "transaction", transactionV2.router);
 app.use("/" + v2prefix + "/" + "util", utilV2.router);
 app.use("/" + v2prefix + "/" + "slp", slpV2.router);
+// Rate limit on all v3 routes
+app.use("/" + v3prefix + "/", route_ratelimit_1.routeRateLimit);
+app.use("/" + v3prefix + "/" + "health-check", healthCheckV3);
+app.use("/" + v3prefix + "/" + "address", addressV3.router);
+app.use("/" + v3prefix + "/" + "blockchain", blockchainV3.router);
+app.use("/" + v3prefix + "/" + "block", blockV3.router);
+app.use("/" + v3prefix + "/" + "control", controlV3.router);
+app.use("/" + v3prefix + "/" + "generating", generatingV3);
+app.use("/" + v3prefix + "/" + "mining", miningV3.router);
+app.use("/" + v3prefix + "/" + "network", networkV3);
+app.use("/" + v3prefix + "/" + "rawtransactions", rawtransactionsV3.router);
+app.use("/" + v3prefix + "/" + "transaction", transactionV3.router);
+app.use("/" + v3prefix + "/" + "util", utilV3.router);
+app.use("/" + v3prefix + "/" + "slp", slpV3.router);
+app.use("/" + v3prefix + "/" + "bitcore", bitcore.router);
+app.use("/" + v3prefix + "/" + "blockbook", blockbook.router);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = {
