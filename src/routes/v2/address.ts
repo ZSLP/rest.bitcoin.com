@@ -56,13 +56,8 @@ async function detailsFromInsight(
 ): Promise<AddressDetailsInterface> {
   try {
     let addr: string
-    if (
-      process.env.BITCOINCOM_BASEURL === "https://bch-insight.bitpay.com/api/"
-    ) {
-      addr = bitbox.Address.toCashAddress(thisAddress)
-    } else {
-      addr = bitbox.Address.toLegacyAddress(thisAddress)
-    }
+
+    addr = bitbox.Address.toCashAddress(thisAddress)
 
     let path: string = `${process.env.BITCOINCOM_BASEURL}addr/${addr}`
 
@@ -71,6 +66,8 @@ async function detailsFromInsight(
     const from: number = currentPage * PAGE_SIZE
     const to: number = from + PAGE_SIZE
     path = `${path}?from=${from}&to=${to}`
+
+    // console.log(`path: ${path}`)
 
     // Query the Insight server.
     const axiosResponse: AxiosResponse = await axios.get(path)
@@ -265,13 +262,8 @@ async function utxoFromInsight(
 ): Promise<AddressUTXOsInterface> {
   try {
     let addr: string
-    if (
-      process.env.BITCOINCOM_BASEURL === "https://bch-insight.bitpay.com/api/"
-    ) {
-      addr = Utils.toCashAddress(thisAddress)
-    } else {
-      addr = Utils.toLegacyAddress(thisAddress)
-    }
+
+    addr = Utils.toCashAddress(thisAddress)
 
     const path: string = `${process.env.BITCOINCOM_BASEURL}addr/${addr}/utxo`
 
